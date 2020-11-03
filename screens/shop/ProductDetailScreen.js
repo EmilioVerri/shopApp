@@ -15,13 +15,16 @@ const ProductDetailScreen=props=>{
     /**
      * RETURN DI PRODUCTDETAILSCREEN:
      * richiamo constante selectedproduct.title= per riprendere il titolo dell'oggetto descritto
+     * faccio la stessa cosa per l'immagine, per il prezzo(metto la toFixed che serve per i decimali)
      */
     return(
         <ScrollView>
-            <Image source={{uri: selectedProduct.imageUrl}}/>
+            <Image style={styles.image} source={{uri: selectedProduct.imageUrl}}/>
+            <View style={styles.actions}>
             <Button title='Add to Cart' onPress={()=>{}}/>
-            <Text></Text>
-            <Text></Text>
+            </View>
+            <Text  style={styles.price}>${selectedProduct.price.toFixed(2)}</Text>
+            <Text  style={styles.description}>{selectedProduct.description}</Text>
         </ScrollView>
     );
 }
@@ -34,7 +37,26 @@ ProductDetailScreen.navigationOptions=navData=>{
 
 
 const styles=StyleSheet.create({
-
+    image:{
+        width:'100%',
+        height:300,
+    },
+    price:{
+        fontSize:20,
+        color:'#888',
+        textAlign:'center',
+        marginVertical:20
+    },
+    description:{
+        fontSize:14,
+        textAlign:'center'
+    },
+    actions:{
+        marginVertical:12,
+        alignItems:'center',
+        marginHorizontal:20
+        
+    }
 });
 
 export default ProductDetailScreen;
