@@ -13,6 +13,12 @@ const defaultNavigationOptions={
         backgroundColor:Platform.OS==='android'?Colors.secondo:''
     },
     headerTintColor:Platform.OS==='android'?'white':Colors.terzo,
+    headerTitleStyle:{
+        fontFamily:'open-sans-bold',
+    },
+    headerBacktitleStyle:{
+        fontFamily:'open-sans',
+    }
 
 
 }
