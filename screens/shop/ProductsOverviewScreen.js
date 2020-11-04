@@ -1,9 +1,12 @@
 import React from 'react';
 import {FlatList,Text,View,StyleSheet} from 'react-native';
-//facciamo import dello useSelector
-import{useSelector} from 'react-redux';
+//facciamo import dello useSelector e la useDispatch
+import{useSelector,useDispatch} from 'react-redux';
 
 import ProductItem from '../../components/shop/ProductItem';
+
+//importo tutte le azioni di cart
+import * as cartActions from '../../store/actions/cart';
 
 
 
@@ -13,8 +16,13 @@ const ProductsOverviewScreen=props=>{
      * e che restituisce i dati che vuoi ottenere.
      * state=è lo stato, products=è il nome attribuito al reducer definito nell'App.js dentro alla combineReducer
      * availableproducts è definito all'interno dei reducer nell'initial state
+     * 
+     * e sotto a questa definisco una constante uguale alla useDispatch
      */
     const products=useSelector(state=>state.products.availableProducts);
+
+    const dispatch=useDispatch();
+
 
 
     return(
@@ -26,6 +34,9 @@ const ProductsOverviewScreen=props=>{
          * nella onViewDetail con navigation entro dentro ShopNavigation e con il navigate  navigo verso il valore productDetail definito in ShopNavigation
          * nel momento in cui la onViewDetail naviga verso ProductDetailScreen aggiungengo l'argomento che ha affianco gli passiamo l'id
          * e gli passiamo anche il titolo che andrà nell'intestazione della pagina
+         * 
+         * nella onAddToCart facciamo dispatch dell'azione vado dentro azione cartActions definito nella import sopra
+         * e prendo l'azione addToCart e gli passo itemdata.item che è tutto il prodotto, che è quello che richiede l'azione
          */
     <FlatList 
     data={products}
@@ -38,7 +49,9 @@ const ProductsOverviewScreen=props=>{
         {productId:itemData.item.id,
         productTitle:itemData.item.title})}
 
-        onAddToCart={()=>{}}/>
+        onAddToCart={()=>{
+            dispatch(cartActions.addToCart(itemData.item))
+        }}/>
     }/>
     );
 }

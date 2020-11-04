@@ -14,16 +14,22 @@ import ShopNavigator from './navigation/ShopNavigator';
 import {AppLoading} from 'expo';
 import * as Font from 'expo-font';
 
+import { composeWithDevTools } from 'redux-devtools-extension';
+
+import cartReducer from './store/reducers/cart';
+
 /**
  * la constante rootReducer con il combineReducers ci permette di mappare i reducers
  */
 const rootReducer=combineReducers({
-    products:productsReducer
+    products:productsReducer,
+    cart:cartReducer
 });
 /**
  * creiamo la constante store che crea lo store e gli passiamo la constante rootReducer come argomento
+ * gli passo anche il composeWidthDevTools
  */
-const store=createStore(rootReducer);
+const store=createStore(rootReducer,composeWithDevTools ());
 
 
 
