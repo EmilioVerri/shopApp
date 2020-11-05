@@ -4,6 +4,8 @@ import { FlatList, Text, View, StyleSheet, Button } from 'react-native';
 import Colors from '../../constants/Colors';
 //importo useSelector
 import {useSelector} from 'react-redux';
+//importo il componente CartItem
+import CartItem from '../../components/shop/CartItem';
 
 const CartScreen = props => {
     /**CART SCREEN:
@@ -51,9 +53,22 @@ const CartScreen = props => {
                     
                 <Button title='Order Now' disabled={cartItems.length===0} />
             </View>
-            <View>
-                <Text>CARD ITEMS</Text>
-            </View>
+            {/**FLATLIST:
+             * passiamo come data la constante definita sopra cartItems
+             * passiamo come estrattore di chiavi la chiave univa definita productId come id dell'oggetto definito sopra
+             * 
+             */}
+
+            < FlatList 
+            data={cartItems}
+            keyExtractor={item=>item.productId} 
+            renderItem={itemData=>
+            <CartItem 
+            quantity={itemData.item.quantity}
+            title={itemData.item.productTitle}
+            amount={itemData.item.sum}
+            onRemove={()=>{}} />}
+            />
         </View>
     );
 }
