@@ -1,7 +1,7 @@
-import { ADD_TO_CART } from "../actions/cart";
+import { ADD_TO_CART,REMOVE_FROM_CART } from "../actions/cart";
 import cartItem from '../../models/cart-item';
 import CartItem from "../../models/cart-item";
-import { Platform } from "react-native";
+import { ActionSheetIOS, Platform } from "react-native";
 
 const initialState={
     items:[],
@@ -74,6 +74,52 @@ export default(state=initialState,action)=>{
                     items:{...state.items,[addedProduct.id]:updateOrNewCarItem},
                     totalAmount:state.totalAmount+prodPrice
                 }
+            }
+            /**
+             * DEFINISCO NUOVO CASE NEL CASO DELLA REMOVE DAL CARRELLO
+             * ricaviamo la quantità prendendo lo state e andando ad utilizzare il productId che gli viene passato nella actions,
+             * troviamo così il prodotto tramite la pid definita nella actions che gli verrà passata
+             * se la quantità di oggetti come quello sono più di uno, quando clicchiamo delete ne togliamo solo 1, non li togliamo tutti al carrello
+             * IF
+             * definisco constante updatedCart= nuovo CartItem e li voglio copiare i valori dell'esistente CartItem ma semplicemente ridurre la quantità
+             * quindi come valore del CartItems gli passo l'azione pid che sarà un oggetto con salvati tutti i valori del Cartitem,
+             * definisco una constante selectedcartItem con dentro le informazioni così posso utilizzarla quando voglio
+             * faccio .quantity che va a riprendere la quantità dell'elemento passato e la diminuisce di 1
+             * e poi passiamo gli altri elementi dell'oggetto, la somma dobbiamo diminuirla del prezzo del prodotto perchè diminuisce di 1 la quantità quindi va ridotta
+             * definisco updatedCartItems come variabile fuori dall'IF
+             * poi nella if dico che la variabile definita è uguale agli oggetti che c'erano prima e sostituisco l'oggetto passato con action.pid che è la chiave con updateCart
+             * 
+             * 
+             * ELSE
+             * quindi dobbiamo ritornare un nuovo oggetto items che contine quelli vecchi e non include più questo oggetto nel caso in cui questo oggetto sia solo 1
+             * creo constante che fa la copia di tutti gli oggetti dentro items e con il valore delete che creo dopo, vado a cancellare dentro alla constante definita prima che copia gli items
+             * quello che rispecchia il pid che gli ho passato dentro alla actions
+             * 
+             * 
+             * 
+             * ritorno una copia dello state, impostiamo items su updateCartItems
+             * e il totale sarà uguale allo stato copiato sopra del totale meno il prezzo del action.pid che viene passato
+             * DOPO DI QUESTO POSSO MANDARE L'AZIONE DAL CARTSCREEN
+             */
+        case REMOVE_FROM_CART:
+            const selectedCartItem=state.items[action.pid];
+            const currentQty=state.items[action.pid].quantity;
+            let updatedCartItems;
+            if(currentQty>1){
+                const updatedCart=new CartItem(
+                    selectedCartItem.quantity-1, 
+                    selectedCartItem.productPrice,
+                    selectedCartItem.productTitle,
+                    selectedCartItem.sum-selectedCartItem.productPrice);
+                    updatedCartItems={...state.items,[action.pid]:updatedCart}
+            }else{
+                updatedCartItems={...state.items};
+                delete updatedCartItems[action.pid];
+            }
+            return{
+                ...state,
+                items:updatedCartItems,
+                totalAmount:state.totalAmount-selectedCartItem.productPrice
             }
     }
     return state;
