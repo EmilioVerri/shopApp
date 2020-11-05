@@ -1,5 +1,6 @@
 
 import {ADD_ORDER} from '../actions/order';
+import Order from '../../models/order';
 
 
 const initialState={
@@ -21,8 +22,7 @@ export default (state=initialState,action)=>{
          * e dentro concat, concateno la constante  newOrder
          */
         case ADD_ORDER:
-            const newOrder=new Order(
-                new Date().toString(),
+            const newOrder=new Order(new Date().toString(),
             action.orderData.items,
             action.orderData.amount,
             new Date());
