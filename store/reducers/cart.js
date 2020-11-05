@@ -2,6 +2,7 @@ import { ADD_TO_CART,REMOVE_FROM_CART } from "../actions/cart";
 import cartItem from '../../models/cart-item';
 import CartItem from "../../models/cart-item";
 import { ActionSheetIOS, Platform } from "react-native";
+import { ADD_ORDER } from "../actions/order";
 
 const initialState={
     items:[],
@@ -121,6 +122,9 @@ export default(state=initialState,action)=>{
                 items:updatedCartItems,
                 totalAmount:state.totalAmount-selectedCartItem.productPrice
             }
+            /**QUANDO CLICCHIAMO SU ORDINA SE RITONO L'INITIALSTATE IL CARRELLO SI SVUOTERA */
+            case ADD_ORDER:
+                return initialState;
     }
     return state;
 };
