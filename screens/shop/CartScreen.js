@@ -14,7 +14,10 @@ const CartScreen = props => {
      * 1) definisco una nuova constante con un nuovo array
      * 2) faccio ciclo for che scorre tutte le chiavi dell'array items
      * 3) dentro al ciclo for farò una push dell'array creato prima e spingo tutti gli items dentro ad un oggetto javascript
-     * che ha un id del prodotto che è la key quindi dentro questo oggetto ci sarà la key come valore e ci sarà anche il titolo del prodotto
+     * che ha un id del prodotto che è la key quindi dentro questo oggetto ci sarà la key come chiave e ci sranno come valori di questa chiave:
+     * il titolo , il prezzo , la quantità, la somma dei valori che sono attribuiti alla stessa chiave
+     * ritorniamo l'array che adesso sarà popolato di oggetti
+     * 
      * 
      */
      const cartTotalAmount= useSelector(state=>state.cart.totalAmount);//faccio così perchè è un oggetto
