@@ -18,12 +18,15 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 
 import cartReducer from './store/reducers/cart';
 
+import ordersReducer from './store/reducers/order';
+
 /**
  * la constante rootReducer con il combineReducers ci permette di mappare i reducers
  */
 const rootReducer=combineReducers({
     products:productsReducer,
-    cart:cartReducer
+    cart:cartReducer,
+    orders:ordersReducer
 });
 /**
  * creiamo la constante store che crea lo store e gli passiamo la constante rootReducer come argomento

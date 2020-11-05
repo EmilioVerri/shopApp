@@ -7,8 +7,9 @@ import {useSelector,useDispatch} from 'react-redux';
 //importo il componente CartItem
 import CartItem from '../../components/shop/CartItem';
 
-//importo azione che ho bisogno
+//importo azioni che ho bisogno
 import* as cartActions from '../../store/actions/cart';
+import * as ordersActions from '../../store/actions/order';
 
 const CartScreen = props => {
     /**CART SCREEN:
@@ -54,6 +55,8 @@ const CartScreen = props => {
  * 
  * nella button metto la disable, se la lunghezza degli articoli del carrello è uguale a zero allora disabilito il pulsante, se invece
  * ci sono degli oggetti restituira true e sarà abilitato il pulsante
+ * definisco una onPress e passo alla funzione dentro il component action degli ordini
+ * passo alla funzione addOrder(cartItems,cartTotalAmount)
  */
     return (
         <View style={styles.screen}>
@@ -62,7 +65,12 @@ const CartScreen = props => {
                     Total:<Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
                     </Text>
                     
-                <Button title='Order Now' disabled={cartItems.length===0} />
+                <Button 
+                title='Order Now' 
+                disabled={cartItems.length===0} 
+                onPress={()=>{
+                    dispatch(ordersActions.addOrder(cartItems,cartTotalAmount))
+                }}/>
             </View>
             {/**FLATLIST:
              * passiamo come data la constante definita sopra cartItems
