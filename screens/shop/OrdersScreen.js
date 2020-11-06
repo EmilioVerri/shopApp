@@ -25,9 +25,12 @@ const OrdersScreen=props=>{
         <FlatList 
         data={orders}
         keyExtractor={item=> item.id}
-        renderItem={itemData=><OrderItem 
+        renderItem={itemData=>
+        <OrderItem 
             amount={itemData.item.totalAmount}
-             date={itemData.item.readableDate} />}/>
+             date={itemData.item.readableDate} 
+             items={itemData.item.items}/>}//così possiamo usare la map dentro OrderItems e andiamo a riprendere dentro models orders items
+             />
     );
 };
 

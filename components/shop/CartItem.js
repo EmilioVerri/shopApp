@@ -3,6 +3,12 @@ import { FlatList, Text, View, StyleSheet, TouchableOpacity, Platform } from 're
 import { Ionicons } from '@expo/vector-icons';
 
 const CartItem = props => {
+
+    /**
+     * nella return dove c'è TouchableOpacity
+     * se la deletable è true allora visualizza la TouchableOpacity,
+     * quindi dobbiamo settare deletable dentro alla CartScreen
+     */
     return (
         <View style={styles.cartItem}>
             <Text style={styles.itemData}>
@@ -11,13 +17,13 @@ const CartItem = props => {
             </Text>
             <View style={styles.itemData}>
                 <Text style={styles.mainText}>${props.amount.toFixed(2)}</Text>
-                <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
+                {props.deletable && <TouchableOpacity onPress={props.onRemove} style={styles.deleteButton}>
                     <Ionicons
                         name={Platform.OS === 'android' ? 'md-trash' : 'ios-trash'}
                         size={23}
                         color='red'
                     />
-                </TouchableOpacity>
+                </TouchableOpacity>}
             </View>
 
         </View>
