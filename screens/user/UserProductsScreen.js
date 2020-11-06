@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList,Text,View,StyleSheet,Platform} from 'react-native';
+import {FlatList,Text,Button,View,StyleSheet,Platform} from 'react-native';
 import {useSelector} from 'react-redux';
 
 //importo gli HeaderButton
@@ -9,6 +9,8 @@ import HeaderButton from '../../components/UI/HeaderButton';
 //importiamo la ProductItem
 
 import ProductItem from '../../components/shop/ProductItem';
+import Colors from '../../constants/Colors';
+
 
 const UserProductsScreen=props=>{
 
@@ -27,7 +29,9 @@ const UserProductsScreen=props=>{
      * dentro a data definisco: userProducts dove avremo accesso ai prodotti dell'utente
      * nel keyExtractor vado a riprendere: l'id dentro a models products
      * nel renderItems vado a definire: una funzione con un campo di input itemData che ci ritorna ProductItem che riprende l'immagine da models product
-     * faccio la stessa cosa per il title, price e definisco anche la onViewDetail e onAddToCart
+     * faccio la stessa cosa per il title, price e definisco anche la onSelect
+     * 
+     * in seguito trai 2 tag di apertura e chiusura <ProductItem> </ProductItem> inserirò i 2 button edit e delete
      */
     return(
         <FlatList 
@@ -38,9 +42,15 @@ const UserProductsScreen=props=>{
         image={itemData.item.imageUrl}
         title={itemData.item.title}
         price={itemData.item.price}
-        onViewDetail={()=>{}}
-        onAddToCart={()=>{}}
-        />}
+        onSelect={()=>{}}
+        >
+              <Button color={Colors.secondo} title='Edit' onPress={()=>{
+            
+        }} />
+            <Button color={Colors.ottavo} title='Delete' onPress={()=>{
+                
+            }} />
+        </ProductItem>}
         />
     );
 }

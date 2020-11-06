@@ -9,7 +9,7 @@ const ProductItem = props => {
     /**
      * per le cifre decimali utilizzo nel prezzo utilizzo toFixed,
      * sto definendo lo stile e i valori che avranno i campi di testo definiti
-     * mettiamo una touchableOpacity che richiama la onViewDetail che è la stessa props definita dentro al Button sotto
+     * mettiamo una touchableOpacity che richiama la onSelect che è la stessa props definita dentro al Button sotto
      */
     let CambioSistema=TouchableOpacity;
     if(Platform.OS==='android'&& Platform.Version>=21){
@@ -18,7 +18,7 @@ const ProductItem = props => {
     return (
         <View style={styles.product}>
             <View style={styles.touchable}>
-            <CambioSistema onPress={props.onViewDetail}>
+            <CambioSistema onPress={props.onSelect}>
                 <View>
                 <View style={styles.imageContainer}>
                     <Image style={styles.image} source={{ uri: props.image }} />
@@ -28,8 +28,9 @@ const ProductItem = props => {
                     <Text style={styles.price}>${props.price.toFixed(2)}</Text>
                 </View>
                 <View style={styles.actions}>
-                    <Button color={Colors.secondo} title='View Details' onPress={props.onViewDetail} />
-                    <Button color={Colors.ottavo} title='Add To Cart' onPress={props.onAddToCart} />
+                {/*<Button color={Colors.secondo} title='View Details' onPress={props.onViewDetail} />
+                    <Button color={Colors.ottavo} title='Add To Cart' onPress={props.onAddToCart} />*/}
+                   {props.children}
                 </View>
                 </View>
         </CambioSistema>
