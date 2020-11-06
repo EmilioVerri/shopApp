@@ -1,6 +1,6 @@
 import React from 'react';
 import {FlatList,Text,Button,View,StyleSheet,Platform} from 'react-native';
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
 
 //importo gli HeaderButton
 import {HeaderButtons,Item} from 'react-navigation-header-buttons';
@@ -11,8 +11,13 @@ import HeaderButton from '../../components/UI/HeaderButton';
 import ProductItem from '../../components/shop/ProductItem';
 import Colors from '../../constants/Colors';
 
+import * as productsActions from '../../store/actions/products';
+
 
 const UserProductsScreen=props=>{
+
+
+    const dispatch=useDispatch();
 
     /**UserProductsScreen:
      * definisco una nuova constante useproducts dove gli passo useSelector al suo interno c'è:
@@ -32,6 +37,9 @@ const UserProductsScreen=props=>{
      * faccio la stessa cosa per il title, price e definisco anche la onSelect
      * 
      * in seguito trai 2 tag di apertura e chiusura <ProductItem> </ProductItem> inserirò i 2 button edit e delete
+     * 
+     * 2)NELLA BUTTON DELETE:
+     * faccio la dispatch dell'azione importata e gli passo alla funzione dentro quell'azione id
      */
     return(
         <FlatList 
@@ -48,7 +56,7 @@ const UserProductsScreen=props=>{
             
         }} />
             <Button color={Colors.ottavo} title='Delete' onPress={()=>{
-                
+                dispatch(productsActions.deleteProduct(itemData.item.id));
             }} />
         </ProductItem>}
         />

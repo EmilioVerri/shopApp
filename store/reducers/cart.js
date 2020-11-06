@@ -4,6 +4,8 @@ import CartItem from "../../models/cart-item";
 import { ActionSheetIOS, Platform } from "react-native";
 import { ADD_ORDER } from "../actions/order";
 
+import { DELETE_PRODUCT } from "../actions/products";
+
 const initialState={
     items:[],
     totalAmount:0
@@ -125,6 +127,41 @@ export default(state=initialState,action)=>{
             /**QUANDO CLICCHIAMO SU ORDINA SE RITONO L'INITIALSTATE IL CARRELLO SI SVUOTERA */
             case ADD_ORDER:
                 return initialState;
+
+
+            /**
+             * GESTISCO DELETE_PRODUCT CHE E' UN AZIONE DI PRODUCTS
+             * 
+             * definisco una if se so che il prodotto che l'ID che stiamo per eliminare non fa parte dell'elenco
+             * allora ritorna uno state 
+             * senò
+             * definisco 3 constanti di cui una è una delete:
+             * 1) la prima che contine tutti gli elementi items
+             * 2) la seconda che contiene la somma degli elementi che hanno quell'id
+             * 3) che è una delete che cancella la constante definita updateItems che contine tutti gli elementi con quell'id
+             * 
+             * 
+             * ritorniamo lo stato che già abbiamo
+             * dentro items:ritorniamo updateitems
+             * e dentro totalAmount ritorniamo la somma totale meno la somma per l'elemento con l'id passato
+             * 
+             * 
+             * adesso dobbiamo lanciare questa azione dentro USERPRODUCTSSCREEN
+             */
+            case DELETE_PRODUCT:
+                if (!state.items[action.pid]) {
+                  return state;
+                }
+                const updatedItems = { ...state.items };
+                const itemTotal = state.items[action.pid].sum;
+                delete updatedItems[action.pid];
+                return {
+                  ...state,
+                  items: updatedItems,
+                  totalAmount: state.totalAmount - itemTotal
+                };
     }
+
+            
     return state;
 };
