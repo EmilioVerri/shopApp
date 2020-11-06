@@ -7,6 +7,7 @@ import React from 'react';
 import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
+import UserProductsScreen from '../screens/user/UserProductsScreen';
 import Colors  from '../constants/Colors';
 import {Platform} from 'react-native';
 
@@ -65,13 +66,30 @@ const OrdersNavigator=createStackNavigator({
 }
 );
 
+//creo un nuovo stackNavigator
+const AdminNavigator=createStackNavigator({
+    UserProducts:UserProductsScreen
+},
+{
+    navigationOptions:{
+        drawerIcon:drawerConfig=><Ionicons 
+        name={Platform.OS==='android'?'md-create':'ios-create'}
+        size={23}
+        color={drawerConfig.tintColor}
+        />
+    },
+    defaultNavigationOptions:defaultNavigationOptions,
+}
+);
+
 /**
  * dentro a questo shopNavigator che sarà un menù unirò i due stackNavigator qua sopra,
  * si utilizza contentOptions per il DrawerNavigator per gli stili
  */
 const ShopNavigator=createDrawerNavigator({
     Products:ProductsNavigator,
-    Orders:OrdersNavigator
+    Orders:OrdersNavigator,
+    Admin:AdminNavigator
 },
 {
     contentOptions:{
