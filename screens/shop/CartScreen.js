@@ -57,12 +57,14 @@ const CartScreen = props => {
  * ci sono degli oggetti restituira true e sarà abilitato il pulsante
  * definisco una onPress e passo alla funzione dentro il component action degli ordini
  * passo alla funzione addOrder(cartItems,cartTotalAmount)
+ * 
+ * Dove ho scritto Math.round(...*100)/100 serve per evitare che durante i calcoli js si perda e vada a mettermi un errore con il segno meno
  */
     return (
         <View style={styles.screen}>
             <View style={styles.summary}>
                 <Text style={styles.summaryText}>
-                    Total:<Text style={styles.amount}>${cartTotalAmount.toFixed(2)}</Text>
+                    Total:<Text style={styles.amount}>${Math.round(cartTotalAmount.toFixed(2)*100)/100}</Text>
                     </Text>
                     
                 <Button 

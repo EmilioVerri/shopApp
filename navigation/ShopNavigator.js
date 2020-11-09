@@ -8,6 +8,7 @@ import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
 import UserProductsScreen from '../screens/user/UserProductsScreen';
+import EditProductScreen from '../screens/user/EditProductScreen';
 import Colors  from '../constants/Colors';
 import {Platform} from 'react-native';
 
@@ -68,7 +69,8 @@ const OrdersNavigator=createStackNavigator({
 
 //creo un nuovo stackNavigator
 const AdminNavigator=createStackNavigator({
-    UserProducts:UserProductsScreen
+    UserProducts:UserProductsScreen,
+    EditProduct:EditProductScreen
 },
 {
     navigationOptions:{

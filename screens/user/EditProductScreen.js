@@ -3,7 +3,9 @@ import {FlatList,Text,View,StyleSheet,Platform} from 'react-native';
 
 const EditProductScreen=props=>{
     return(
-        true
+        <View>
+            <Text>Edit Product Screen</Text>
+        </View>
     );
 }
 
