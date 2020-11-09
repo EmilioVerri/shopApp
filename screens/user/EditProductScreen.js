@@ -1,5 +1,5 @@
 import React,{useState,useEffect,useCallback} from 'react';//usiamo useState per salvare l'input dell'utente
-import { ScrollView, Text, View, StyleSheet, Platform, TextInput } from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Platform, TextInput,Alert} from 'react-native';
 //importo gli HeaderButton
 import {HeaderButtons,Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../../components/UI/HeaderButton';
@@ -41,6 +41,8 @@ const[imageUrl,setImageUrl]=useState(editedProduct?editedProduct.imageUrl:'');
 const[price,setPrice]=useState('');
 const[description,setDescription]=useState(editedProduct?editedProduct.description:'');
 
+
+
 /**
  * definisco la dispatch per chiamare le azioni:
  * nella submitHandler se editProduct è vero siamo in modifica quindi:
@@ -61,6 +63,7 @@ const submitHandler=useCallback(()=>{
     else{
         dispatch(productsActions.createProduct(title,description,imageUrl,+price));
     }
+    props.navigation.goBack();//torna alla schermata precedente
 },[dispatch,prodId,title,description,imageUrl,price]);
 
 

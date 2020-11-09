@@ -1,5 +1,5 @@
 import React from 'react';
-import {FlatList,Text,Button,View,StyleSheet,Platform} from 'react-native';
+import {FlatList,Text,Button,View,StyleSheet,Platform,Alert} from 'react-native';
 import {useSelector,useDispatch} from 'react-redux';
 
 //importo gli HeaderButton
@@ -35,6 +35,15 @@ const UserProductsScreen=props=>{
     const userProducts=useSelector(state=>state.products.userProducts)
 
 
+    const deleteHandler=id=>{
+        Alert.alert('Are you sure?', 'Do you really want to delete this item?',[
+            {text:'No', style:'default'},
+            {text:'Yes',style:'destructive',onPress:()=>{
+                dispatch(productsActions.deleteProduct(id))
+            }}
+        ])
+    }
+
     /**RETURN:
      * nella return definisco una FLATLIST:
      * dentro a data definisco: userProducts dove avremo accesso ai prodotti dell'utente
@@ -51,6 +60,7 @@ const UserProductsScreen=props=>{
      * 2)NELLA BUTTON DELETE:
      * faccio la dispatch dell'azione importata e gli passo alla funzione dentro quell'azione id
      */
+    
     return(
         <FlatList 
         data={userProducts}
@@ -68,7 +78,7 @@ const UserProductsScreen=props=>{
                    editProductHandler(itemData.item.id);
         }} />
             <Button color={Colors.ottavo} title='Delete' onPress={()=>{
-                dispatch(productsActions.deleteProduct(itemData.item.id));
+                deleteHandler(itemData.item.id)//gli passo l'id alla allert sopra
             }} />
         </ProductItem>}
         />
