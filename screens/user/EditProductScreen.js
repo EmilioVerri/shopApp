@@ -5,7 +5,8 @@ import {HeaderButtons,Item} from 'react-navigation-header-buttons';
 import HeaderButton from '../../components/UI/HeaderButton';
 
 //importo lo useSelector
-import {useSelector} from 'react-redux';
+import {useSelector,useDispatch} from 'react-redux';
+import * as productsActions from '../../store/actions/products';
 
 const EditProductScreen = props => {
 /** EditProductScreen:
@@ -40,10 +41,27 @@ const[imageUrl,setImageUrl]=useState(editedProduct?editedProduct.imageUrl:'');
 const[price,setPrice]=useState('');
 const[description,setDescription]=useState(editedProduct?editedProduct.description:'');
 
+/**
+ * definisco la dispatch per chiamare le azioni:
+ * nella submitHandler se editProduct è vero siamo in modifica quindi:
+ * 1)lanciamo un azione con la dispatch dentro all'azione productsActions richiamiamo updateProducts e gli passiamo id, title,description,imageUrl
+ * nella submitHandler se editProduct è false siamo in aggiungi quindi:
+ * 2)lanciamo un azione con la dispatch dentro all'azione productsActions richiamiamo createProducts e gli passiamo  title,description,imageUrl,price
+ * e nel prezzo mettiamo un più per non fare generare un errore siccome è un numero e non una stringa
+ * 
+ * nella submitHandler dobbiamo specificare le dipendenze della useCallBack, saranno:
+ * 1) dispatch / 2)prodId /3) title 4) description / 5) imageUrl / 6) price QUESTI SONO TUTTI GLI ELEMENTI CHE PASSO AD UN ACTIONS
+ */
+const dispatch=useDispatch();
 
 const submitHandler=useCallback(()=>{
-    console.log('Submitting!');
-},[]);
+    if(editedProduct){
+        dispatch(productsActions.updateProduct(prodId,title, description, imageUrl));
+    }
+    else{
+        dispatch(productsActions.createProduct(title,description,imageUrl,+price));
+    }
+},[dispatch,prodId,title,description,imageUrl,price]);
 
 
 useEffect(()=>{
