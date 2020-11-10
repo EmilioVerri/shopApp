@@ -83,25 +83,46 @@ props.navigation.setParams({submit:submitHandler})
  * che se editedProduct esiste (perchè viene passato id a questo componente che permette a editedproduct di esistere)
  * allora siamo nella sezione modifica e quindi non mostrare questo il campo price, perchè il prezzo sarà invariato. 
  * Se editedProduct invece non esiste mostra questo campo così che l'utente può modificarlo
+ * 
+ * utilizziamo per i campi di input le keyboardType e autoCapitalize e autoCorrect e returnKeyType
  */
     return (
         <ScrollView>
             <View style={styles.form}>
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Title</Text>
-                    <TextInput style={styles.input} value={title} onChangeText={text=>setTitle(text)}/>
+                    <TextInput 
+                    style={styles.input} 
+                    value={title} 
+                    onChangeText={text=>setTitle(text)}
+                    keyboardType='default'
+                    autoCapitalize='sentences'
+                    autoCorrect={false}
+                    returnKeyType='next'/>
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Image URL</Text>
-                    <TextInput style={styles.input} value={imageUrl} onChangeText={text=>setImageUrl(text)}/>
+                    <TextInput 
+                    style={styles.input} 
+                    value={imageUrl} 
+                    onChangeText={text=>setImageUrl(text)}
+                    keyboardType='default'/>
                 </View>
                {editedProduct?null: <View style={styles.formControl}>
                     <Text style={styles.label}>Price</Text>
-                    <TextInput style={styles.input} value={price} onChangeText={text=>setPrice(text)}/>
+                    <TextInput 
+                    style={styles.input} 
+                    value={price} 
+                    onChangeText={text=>setPrice(text)}
+                    keyboardType='decimal-pad'/>
                 </View>}
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Description</Text>
-                    <TextInput style={styles.input} value={description} onChangeText={text=>setDescription(text)}/>
+                    <TextInput 
+                    style={styles.input} 
+                    value={description} 
+                    onChangeText={text=>setDescription(text)}
+                    keyboardType='default'/>
                 </View>
             </View>
         </ScrollView>
