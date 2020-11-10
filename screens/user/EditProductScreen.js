@@ -57,6 +57,10 @@ const[description,setDescription]=useState(editedProduct?editedProduct.descripti
 const dispatch=useDispatch();
 
 const submitHandler=useCallback(()=>{
+    if(!titleIsValid){//se è false titleIsValid allora ritorno una return ed esce dal ciclo, non lo esegue e ritorna un alert
+        Alert.alert('Wrong input!','Please check the errors in the form.',[{text:'Okay',}])
+        return;
+    }
     if(editedProduct){
         dispatch(productsActions.updateProduct(prodId,title, description, imageUrl));
     }
@@ -73,6 +77,24 @@ props.navigation.setParams({submit:submitHandler})
 [submitHandler])
 
 
+/**
+ * faccio questa funzione per verificare se il titolo è statovalidato
+ * definisco anche un nuovo useState per la validazione del titolo
+ * se il valore di text senza contare gli spazi (trim) è uguale a  zero
+ * setto useState a false(non valido) senò setto lo useState a true(valido)
+ * e infine setto la setTitle(text) con il valore passato
+ */
+const[titleIsValid,setTitleIsValid]=useState(false);
+
+
+const titleChangeHandler=text=>{
+    if(text.trim().legnth===0){
+        setTitleIsValid(false);
+    }else{
+        setTitleIsValid(true);
+    }
+    setTitle(text);
+}
 
 /**RETURN:
  * nella return creiamo dei campi di testo di input e dentro ad essi l'utente inserirà le informazioni
@@ -99,6 +121,7 @@ props.navigation.setParams({submit:submitHandler})
                     autoCapitalize='sentences'
                     autoCorrect={false}
                     returnKeyType='next'/>
+                    {!titleIsValid && <Text>Please enter a valid title!</Text>}
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Image URL</Text>
