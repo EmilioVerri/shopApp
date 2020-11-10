@@ -1,4 +1,5 @@
-import React,{useState,useEffect,useCallback} from 'react';//usiamo useState per salvare l'input dell'utente
+//la useReducer viene utilizzata quando ci sono molti stati molto simili tra di loro
+import React,{useState,useEffect,useCallback,useReducer} from 'react';//usiamo useState per salvare l'input dell'utente
 import { ScrollView, Text, View, StyleSheet, Platform, TextInput,Alert} from 'react-native';
 //importo gli HeaderButton
 import {HeaderButtons,Item} from 'react-navigation-header-buttons';
@@ -8,8 +9,68 @@ import HeaderButton from '../../components/UI/HeaderButton';
 import {useSelector,useDispatch} from 'react-redux';
 import * as productsActions from '../../store/actions/products';
 
+
+/**
+ *creiamo un useReducer:
+ si crea fuori dalla funzione principale.
+ Prende uno stato e un azione , NON CENTRA NIENTE CON REDUX
+ creiamo all'esterno un azione
+ quando riceviamo un azione nel formReducer dobbiamo cambiare lo state:
+ 1)faccio update della Values definisco una constante updatedValues che è un oggetto che contiene:
+ tutti gli stati iniziali dell'inputValues contenuti, va a richiamarlo dalla useReducer
+ e voglio sostituire i valori che ci sono già con i valori inseriti nell'input
+ diamo come chiave l'azione che viene chiamata e come valore il valore che viene passato da quella azione
+
+ 2) faccio update della Validities definendo una constante updatedValidities che restituisce un ogggetto che contiene:
+ tutti gli stati iniziali dell'inputValidities contenuti, va a richiamarlo dalla useReducer
+ e voglio sostituire i valori che ci sono già con i valori inseriti nell'input
+ diamo come chiave l'azione che viene chiamata e come valore siccome è un boolean il valore true o false della isValid
+
+ 3)faccio update della formIsValid
+definisco variabile formIsValid e la metto uguale a true
+faccio ciclo for che cicla tutte le chiavi dentro updatedvalidities e se tutti i valori su updatedValidities è true allora anche questo ritorna true
+se anche solo un elemento è falso ritorna false , esamina tutti i form per la key per la chiave  && serve per sovrascrivere ai valori vecchi i valori nuovi true ciclati per chiave
+ 
+ ritorneremo un nuovo stato che sostituisce inputValues con la constante updatedValues e 
+ sostituisce inputValidities con la constante updatedValidities
+
+ e sostituisco la vecchia formIsValid con la nuova updatedFormIsValid
+
+
+ */
+
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;//se qualcosa va male restituisco l'ultimo stato salvato 
+};
+
+
+
+
+
+
 const EditProductScreen = props => {
-/** EditProductScreen:
+    /** EditProductScreen:
  * definisco useState per salvare i dati dell'utente
  * e creo tanti useState quanti i campi di input che ho fatto dentro alla return
  * se editProduct è presente (perchè viene passato id a questo componente che permette a editedproduct di esistere) siamo nella sezione modifica e quindi possiamo modificare il titolo, l'immagine, e la descrizione
@@ -34,14 +95,48 @@ const prodId=props.navigation.getParam('productId');
 
 const editedProduct=useSelector(state=>state.products.userProducts.find(prod=>prod.id===prodId));
 
+    /**
+     * DEFINIAMO UNA USEREDUCER,
+     * che è uguale ad una destrutturazione sulla formState e su dispatchFormState
+     * si aggiorna con formState e dispatch permette di inviare l'azione
+     * che richiama la reducer creata fuori questa funzione
+     * e gli definiamo gli stati iniziali:
+     * 1)inputValues: mettiamo title e gli diciamo che se c'è editedProduct allora il compo title sarà riempito senò sarà vuoto, 
+     * faccio la stessa cosa per imageUrl,description per il prezzo lo inizializziamo vuoto
+     * 
+     * 2) inputValidities: se c'è editedProduct allora è valido e ritorno true senò non è validato e ritorno false
+     * faccio la stessa cosa per imageUrl,description,price
+     * 
+     * 3)formIsValid: se c'è editedProduct allora è valido e ritorno true senò non è validato e ritorno false
+     */
+
+    const [formState, dispatchFormState] = useReducer(formReducer, {
+        inputValues: {
+          title: editedProduct ? editedProduct.title : '',
+          imageUrl: editedProduct ? editedProduct.imageUrl : '',
+          description: editedProduct ? editedProduct.description : '',
+          price: ''
+        },
+        inputValidities: {
+          title: editedProduct ? true : false,
+          imageUrl: editedProduct ? true : false,
+          description: editedProduct ? true : false,
+          price: editedProduct ? true : false
+        },
+        formIsValid: editedProduct ? true : false
+      });
 
 
+
+
+
+/*TOGLIAMO GLI STATE PER LA USEREDUCER
 const[title,setTitle]=useState(editedProduct?editedProduct.title:'');
 const[imageUrl,setImageUrl]=useState(editedProduct?editedProduct.imageUrl:'');
 const[price,setPrice]=useState('');
 const[description,setDescription]=useState(editedProduct?editedProduct.description:'');
 
-
+*/
 
 /**
  * definisco la dispatch per chiamare le azioni:
@@ -56,44 +151,72 @@ const[description,setDescription]=useState(editedProduct?editedProduct.descripti
  */
 const dispatch=useDispatch();
 
-const submitHandler=useCallback(()=>{
-    if(!titleIsValid){//se è false titleIsValid allora ritorno una return ed esce dal ciclo, non lo esegue e ritorna un alert
-        Alert.alert('Wrong input!','Please check the errors in the form.',[{text:'Okay',}])
-        return;
+const submitHandler = useCallback(() => {
+    if (!formState.formIsValid) {
+      Alert.alert('Wrong input!', 'Please check the errors in the form.', [
+        { text: 'Okay' }
+      ]);
+      return;
     }
-    if(editedProduct){
-        dispatch(productsActions.updateProduct(prodId,title, description, imageUrl));
+    if (editedProduct) {
+      dispatch(
+        productsActions.updateProduct(
+          prodId,
+          formState.inputValues.title,
+          formState.inputValues.description,
+          formState.inputValues.imageUrl
+        )
+      );
+    } else {
+      dispatch(
+        productsActions.createProduct(
+          formState.inputValues.title,
+          formState.inputValues.description,
+          formState.inputValues.imageUrl,
+          +formState.inputValues.price
+        )
+      );
     }
-    else{
-        dispatch(productsActions.createProduct(title,description,imageUrl,+price));
-    }
-    props.navigation.goBack();//torna alla schermata precedente
-},[dispatch,prodId,title,description,imageUrl,price]);
+    props.navigation.goBack();
+  }, [dispatch, prodId, formState]);
 
 
-useEffect(()=>{
-props.navigation.setParams({submit:submitHandler})
-},
-[submitHandler])
+  useEffect(() => {
+    props.navigation.setParams({ submit: submitHandler });
+  }, [submitHandler]);
 
 
 /**
- * faccio questa funzione per verificare se il titolo è statovalidato
+ * faccio questa funzione per verificare se il testo è stato validato
+ * come campo di input metto il testo e inputIdentifier per verificare se si parla diun titolo o di un immagineUrl
+ * definisco isValid=false;
+ * così secontiene più di 0 caratteri senza contare spazi(trim) allora cambia isValid a true
  * definisco anche un nuovo useState per la validazione del titolo
- * se il valore di text senza contare gli spazi (trim) è uguale a  zero
- * setto useState a false(non valido) senò setto lo useState a true(valido)
- * e infine setto la setTitle(text) con il valore passato
+ * richiamo l'azione definita sopra dispatchFormState e gli passo un oggetto per l'azione:
+ * gli passo il type che è FORM_UPDATE definita sopra che è l'azione
+ * e poi passo tutti gli altri dati che vado ad utilizzare
+ * text, isValid (e dobbiamo fare sapere quale input ha innescato questo),
+ * input:'title va a riprendere il valore definito dentro inputValues e la inputValidities//l'ho cambiata
+ * inpu: metto identifier che lo utilizzo per verificare se si tratta di un titolo sia per imageUrl,price e description 
+ * 
  */
+
+/*TOGLIAMO GLI STATE PER LA USEREDUCER
 const[titleIsValid,setTitleIsValid]=useState(false);
+*/
 
 
-const titleChangeHandler=text=>{
-    if(text.trim().legnth===0){
-        setTitleIsValid(false);
-    }else{
-        setTitleIsValid(true);
+
+const textChangeHandler=(inputIdentifier,text)=>{
+    let isValid=false;
+    if(text.trim().length>0){
+        isValid=true;
     }
-    setTitle(text);
+    dispatchFormState({
+        type:FORM_INPUT_UPDATE,
+        value:text,isValid:isValid,
+        input:inputIdentifier
+        /*input:'title'*/})
 }
 
 /**RETURN:
@@ -107,6 +230,11 @@ const titleChangeHandler=text=>{
  * Se editedProduct invece non esiste mostra questo campo così che l'utente può modificarlo
  * 
  * utilizziamo per i campi di input le keyboardType e autoCapitalize e autoCorrect e returnKeyType
+ * 
+ * nella onChange faccio un bind sulla funzione e gli attribuisco un valore che sarà inputIdentifier
+ * lo faccio sia per il titolo sia per imageUrl,price e description che sono i nomi che ho inserito nell'inputValues e inputValidities
+ * 
+ * dentro a value lo sostituiamo con il formState e gli attribuiamo per ognuno il valore dell'elemento
  */
     return (
         <ScrollView>
@@ -115,36 +243,36 @@ const titleChangeHandler=text=>{
                     <Text style={styles.label}>Title</Text>
                     <TextInput 
                     style={styles.input} 
-                    value={title} 
-                    onChangeText={text=>setTitle(text)}
+                    value={formState.inputValues.title} 
+                    onChangeText={textChangeHandler.bind(this,'title')}
                     keyboardType='default'
                     autoCapitalize='sentences'
                     autoCorrect={false}
                     returnKeyType='next'/>
-                    {!titleIsValid && <Text>Please enter a valid title!</Text>}
+                    {!formState.inputValidities.title && <Text>Please enter a valid title!</Text>}
                 </View>
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Image URL</Text>
                     <TextInput 
                     style={styles.input} 
-                    value={imageUrl} 
-                    onChangeText={text=>setImageUrl(text)}
+                    value={formState.inputValues.imageUrl} 
+                    onChangeText={textChangeHandler.bind(this,'imageUrl')}
                     keyboardType='default'/>
                 </View>
                {editedProduct?null: <View style={styles.formControl}>
                     <Text style={styles.label}>Price</Text>
                     <TextInput 
                     style={styles.input} 
-                    value={price} 
-                    onChangeText={text=>setPrice(text)}
+                    value={formState.inputValues.price} 
+                    onChangeText={textChangeHandler.bind(this,'price')}
                     keyboardType='decimal-pad'/>
                 </View>}
                 <View style={styles.formControl}>
                     <Text style={styles.label}>Description</Text>
                     <TextInput 
                     style={styles.input} 
-                    value={description} 
-                    onChangeText={text=>setDescription(text)}
+                    value={formState.inputValues.description} 
+                    onChangeText={textChangeHandler.bind(this,'description')}
                     keyboardType='default'/>
                 </View>
             </View>
