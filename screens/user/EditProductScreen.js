@@ -41,28 +41,30 @@ se anche solo un elemento è falso ritorna false , esamina tutti i form per la k
 
  */
 
+
+
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
-    if (action.type === FORM_INPUT_UPDATE) {
-        const updatedValues = {
-            ...state.inputValues,
-            [action.input]: action.value
-        };
-        const updatedValidities = {
-            ...state.inputValidities,
-            [action.input]: action.isValid
-        };
-        let updatedFormIsValid = true;
-        for (const key in updatedValidities) {
-            updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-        }
-        return {
-            formIsValid: updatedFormIsValid,
-            inputValidities: updatedValidities,
-            inputValues: updatedValues
-        };
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
     }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
     return state;//se qualcosa va male restituisco l'ultimo stato salvato 
 };
 
@@ -93,10 +95,10 @@ const EditProductScreen = props => {
 */
 
 
-    const prodId = props.navigation.getParam('productId');
-
-    const editedProduct = useSelector(state => state.products.userProducts.find(prod => prod.id === prodId));
-
+const prodId = props.navigation.getParam('productId');
+const editedProduct = useSelector(state =>
+  state.products.userProducts.find(prod => prod.id === prodId)
+);
     /**
      * DEFINIAMO UNA USEREDUCER,
      * che è uguale ad una destrutturazione sulla formState e su dispatchFormState
@@ -114,19 +116,19 @@ const EditProductScreen = props => {
 
     const [formState, dispatchFormState] = useReducer(formReducer, {
         inputValues: {
-            title: editedProduct ? editedProduct.title : '',
-            imageUrl: editedProduct ? editedProduct.imageUrl : '',
-            description: editedProduct ? editedProduct.description : '',
-            price: ''
+          title: editedProduct ? editedProduct.title : '',
+          imageUrl: editedProduct ? editedProduct.imageUrl : '',
+          description: editedProduct ? editedProduct.description : '',
+          price: ''
         },
         inputValidities: {
-            title: editedProduct ? true : false,
-            imageUrl: editedProduct ? true : false,
-            description: editedProduct ? true : false,
-            price: editedProduct ? true : false
+          title: editedProduct ? true : false,
+          imageUrl: editedProduct ? true : false,
+          description: editedProduct ? true : false,
+          price: editedProduct ? true : false
         },
         formIsValid: editedProduct ? true : false
-    });
+      });
 
 
 
@@ -155,37 +157,36 @@ const EditProductScreen = props => {
 
     const submitHandler = useCallback(() => {
         if (!formState.formIsValid) {
-            Alert.alert('Wrong input!', 'Please check the errors in the form.', [
-                { text: 'Okay' }
-            ]);
-            return;
+          Alert.alert('Wrong input!', 'Please check the errors in the form.', [
+            { text: 'Okay' }
+          ]);
+          return;
         }
         if (editedProduct) {
-            dispatch(
-                productsActions.updateProduct(
-                    prodId,
-                    formState.inputValues.title,
-                    formState.inputValues.description,
-                    formState.inputValues.imageUrl
-                )
-            );
+          dispatch(
+            productsActions.updateProduct(
+              prodId,
+              formState.inputValues.title,
+              formState.inputValues.description,
+              formState.inputValues.imageUrl
+            )
+          );
         } else {
-            dispatch(
-                productsActions.createProduct(
-                    formState.inputValues.title,
-                    formState.inputValues.description,
-                    formState.inputValues.imageUrl,
-                    +formState.inputValues.price
-                )
-            );
+          dispatch(
+            productsActions.createProduct(
+              formState.inputValues.title,
+              formState.inputValues.description,
+              formState.inputValues.imageUrl,
+              +formState.inputValues.price
+            )
+          );
         }
         props.navigation.goBack();
-    }, [dispatch, prodId, formState]);
+      }, [dispatch, prodId, formState]);
 
-
-    useEffect(() => {
+      useEffect(() => {
         props.navigation.setParams({ submit: submitHandler });
-    }, [submitHandler]);
+      }, [submitHandler]);
 
 
     /**
@@ -221,19 +222,21 @@ const EditProductScreen = props => {
 
 
 
-    const inputChangeHandler =useCallback( (inputIdentifier, inputValue,inputValidity) => {
+   const inputChangeHandler = useCallback(
+    (inputIdentifier, inputValue, inputValidity) => {
         /*let isValid = false;
         if (text.trim().length > 0) {
             isValid = true;
         }*/
         dispatchFormState({
             type: FORM_INPUT_UPDATE,
-            value: inputValue, 
+            value: inputValue,
             isValid: inputValidity,
             input: inputIdentifier
-            /*input:'title'*/
-        })
-    },[dispatchFormState])
+          });
+        },
+        [dispatchFormState]
+      );
 
     /**RETURN:
      * nella return creiamo dei campi di testo di input e dentro ad essi l'utente inserirà le informazioni
@@ -253,21 +256,25 @@ const EditProductScreen = props => {
      * dentro a value lo sostituiamo con il formState e gli attribuiamo per ognuno il valore dell'elemento
      */
     return (
-        <KeyboardAvoidingView style={{flex:1}} behavior="padding" keyboardVerticalOffset={100}>
+        <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior="padding"
+        keyboardVerticalOffset={100}
+      >
         <ScrollView>
-            <View style={styles.form}>
-                <Input
-                id='title'// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
-                    label='Title'
-                    errorText="Please enter a valid title!"
-                    keyboardType='default'
-                    autoCapitalize='sentences'
-                    autoCorrect={false}
-                    returnKeyType='next'
+        <View style={styles.form}>
+          <Input
+            id="title"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
+            label="Title"
+            errorText="Please enter a valid title!"
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            returnKeyType="next"
                     //deve ricevere 2 argomenti preso dalla useEffects
                     //onInputChange={inputChangeHandler.bind(this,'title')} RIMUOVO IL BIND PER COLPA USECALLBACK
                     onInputChange={inputChangeHandler}
-                    initialValue={editedProduct?editedProduct.title:''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
+                    initialValue={editedProduct ? editedProduct.title : ''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
                     initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
                     //lo inserisco per definire le validazioni:
                     required
@@ -309,13 +316,15 @@ const EditProductScreen = props => {
                     errorText="Please enter a valid description!"
                     keyboardType='default'
                     autoCapitalize='sentences'
-                    autoCorrect={false}
+                    autoCorrect
                     multiline
                     numberOfLines={3}
                      //onInputChange={inputChangeHandler.bind(this,'description')} RIMUOVO IL BIND PER COLPA USECALLBACK
                     onInputChange={inputChangeHandler}
                     initialValue={editedProduct?editedProduct.description:''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
                     initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
+                    required
+                    minLength={5}
                      />
             </View>
         </ScrollView>
@@ -334,23 +343,30 @@ EditProductScreen.navigationOptions = navData => {
      * 
      * dentro la onPress richiamo la funzione submitFn definita qua sopra
     */
-    return {
-        headerTitle: navData.navigation.getParam('productId') ? 'Edit Product' : 'Add Product',
-        headerRight: (
-            <HeaderButtons HeaderButtonComponent={HeaderButton}>
-                <Item title='Save' iconName={Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'}
-                    onPress={submitFn} />
-            </HeaderButtons>
-        )
-    }
-}
+   return {
+    headerTitle: navData.navigation.getParam('productId')
+      ? 'Edit Product'
+      : 'Add Product',
+    headerRight: (
+      <HeaderButtons HeaderButtonComponent={HeaderButton}>
+        <Item
+          title="Save"
+          iconName={
+            Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
+          }
+          onPress={submitFn}
+        />
+      </HeaderButtons>
+    )
+  };
+};
 
 
 const styles = StyleSheet.create({
     form: {
-        margin: 20,
+      margin: 20
     }
-})
-
-
-export default EditProductScreen;
+  });
+  
+  export default EditProductScreen;
+  

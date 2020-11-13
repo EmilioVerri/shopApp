@@ -3,8 +3,8 @@
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 
 export const deleteProduct = productId => {
-  return { type: DELETE_PRODUCT, pid: productId };
-};
+    return { type: DELETE_PRODUCT, pid: productId };
+  };
 
 
 
@@ -32,36 +32,40 @@ export const CREATE_PRODUCT='CREATE_PRODUCT';
 
 
 
+
  */
-export const createProduct=(title,description,imageUrl,price)=>{
-    return async dispatch=>{
+export const createProduct = (title, description, imageUrl, price) => {
+    return async dispatch => {
+      // any async code you want!
+      const response = await fetch('https://rn-shopapp-fb5e0.firebaseio.com/products.json', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          title,
+          description,
+          imageUrl,
+          price
+        })
+      });
 
-       const response= fetch('https://rn-shopapp-fb5e0.firebaseio.com/products.json',{
-            method:'POST',
-            headers:{
-                'Content-Type':'application/json'
-            },
-            body:JSON.stringify({
-                title,
-                description,
-                imageUrl,
-                price
-            })
-        });
-
-        const resData= await response.json();
+      const resData = await response.json();
         console.log(resData);
 
 
-        dispatch({type:CREATE_PRODUCT,productData:{
-            id:resData.name, //inviamo id del prodotto a fireBase quindi in products Reducer adesso possiamo passare id
-            title,
-            description,
-            imageUrl,
-            price
-        }})
-
-    }
+        dispatch({
+            type: CREATE_PRODUCT,
+            productData: {
+              id: resData.name, //inviamo id del prodotto a fireBase quindi in products Reducer adesso possiamo passare id
+              title,
+              description,
+              imageUrl,
+              price
+            }
+          });
+        };
+      
     
 
    /* return {type:CREATE_PRODUCT,productData:{
@@ -77,12 +81,14 @@ export const createProduct=(title,description,imageUrl,price)=>{
 export const UPDATE_PRODUCT='UPDATE_PRODUCT';
 
 
-export const updateProduct=(id,title,description,imageUrl)=>{
-    return {type:UPDATE_PRODUCT,
-        pid:id,
-        productData:{
+export const updateProduct = (id, title, description, imageUrl) => {
+    return {
+      type: UPDATE_PRODUCT,
+      pid: id,
+      productData: {
         title,
         description,
         imageUrl
-    }}
-}
+      }
+    };
+  };
