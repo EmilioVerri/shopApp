@@ -129,32 +129,44 @@ export const SET_PRODUCTS = 'SET_PRODUCTS';
 export const fetchProducts = () => {
     return async dispatch => {
       // any async code you want!
-      const response = await fetch(
-        'https://rn-shopapp-fb5e0.firebaseio.com/products.json',{
-            method:'GET'
-        }
-      );
-  
-      const resData = await response.json();
-      const loadedProducts = [];
-  
-      for (const key in resData) {
-        loadedProducts.push(
-          new Product(
-            key,
-            'u1',
-            resData[key].title,
-            resData[key].imageUrl,
-            resData[key].description,
-            resData[key].price
-          )
+      //mettiamo tutto il codice dentro ad una try così possiamo gestire gli errori
+      try {
+        const response = await fetch(
+            'https://rn-shopapp-fb5e0.firebaseio.com/products.json'
         );
-  
+/**se ritorna un 200 e quindi si è connessi con il link sopra ritorna un 200=ok
+ * se response.ok è falso allora restituisci la frase di errore e lo gestiamo dentro ProductsOverviewScreen
+ */
+if (!response.ok) {
+    throw new Error('Something went wrong!');
+  }
+      
+  const resData = await response.json();
+  const loadedProducts = [];
+
+  for (const key in resData) {
+    loadedProducts.push(
+      new Product(
+        key,
+        'u1',
+        resData[key].title,
+        resData[key].imageUrl,
+        resData[key].description,
+        resData[key].price
+      )
+    );
+  }
+
+  dispatch({ type: SET_PRODUCTS, products: loadedProducts });
       }
-  
-      dispatch({ type: SET_PRODUCTS, products: loadedProducts });
+      /**gestisco gli errori con la catch */
+     catch (err) {
+        // send to custom analytics server
+        throw err;
+      }
     };
   };
 
+  
 
 

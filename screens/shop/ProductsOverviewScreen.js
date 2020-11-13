@@ -1,5 +1,5 @@
-import React,{useEffect} from 'react';
-import {FlatList,Text,View,StyleSheet,Platform,Button} from 'react-native';
+import React,{useState,useEffect,useCallback} from 'react';//definisco useState per il caricamento iniziale
+import {FlatList,Text,View,StyleSheet,Platform,Button,ActivityIndicator} from 'react-native'; //ActivityIndicator serve per indicare uno spinner di attesa
 //facciamo import dello useSelector e la useDispatch
 import{useSelector,useDispatch} from 'react-redux';
 
@@ -19,6 +19,12 @@ import Colors from '../../constants/Colors';
 
 
 const ProductsOverviewScreen=props=>{
+//faccio useState per il caricamento della pagina iniziale e lo definisco false
+const [isLoading, setIsLoading] = useState(false);
+//definisco nuovo state per gli errori e lo inizializzo undefined cioè vuoto
+const [error, setError] = useState();
+
+
     /**PRODUCTSOVERVIEWSCREEN:
      * creo constante products che chiama lo useSelector che riceve autometicamente lo stato,
      * e che restituisce i dati che vuoi ottenere.
@@ -34,20 +40,97 @@ const ProductsOverviewScreen=props=>{
     /**definiamo una useEffects per ricevere le informazioni dal DB
      * e facciamo la dispatch sull'azione productsActions
      * facendo così ci resituirà un oggetto da fireBase e ogni oggetto è abbinato al suo ID univoco
+     * 
+     * dentro useEffects metto isLoading a true che è quando carico gli elementi da FireBase
+     * creo un asincrono nella mia Effects e devo avvolgerlo in una funzione dentro alla useEffects
+     * e dentro a questa funzione metto sia il setIsLoading(true); sia la dispatch
+     * e poi richiamo la funzione loadProducts() 
+     * utilizzo await per aspettare che la dispatch sia fatta e dopo che l'ha fatta
+     * facciamo setIsLoading(falsa)
      */
+
+
+    const loadProducts = useCallback(async () => {
+        setError(null);
+        setIsLoading(true);
+        try {
+          await dispatch(productsActions.fetchProducts());
+        } catch (err) {
+          setError(err.message);//richiamo useState
+        }
+        setIsLoading(false);
+      }, [dispatch, setIsLoading, setError]);
+
+
+     /**per gestire gli errori faccio una try e una catch qua dentro */
     useEffect(()=>{
-        dispatch(productsActions.fetchProducts());
-    },[
-        dispatch,
-    ]);
 
-    const selectItemHandler=(id,title)=>{
-        props.navigation.navigate('ProductDetail',
-        {productId:id,
-        productTitle:title
-    })
+        /** dispatch(productsActions.fetchProducts()); prima estraevo solo il prodotto dal DB adesso gestisco anche il caricamento della pagina */
+       /*LA SPOSTO IN UNA FUNZIONE COSì CHE POSSA ESSERE RICHIAMATA PIU' VOLTE e lo mettiamo dentro ad una useCallBack
+        const loadProducts=async()=>{
+            setIsLoading(true);
+            try{
+                await dispatch(productsActions.fetchProducts());
+            }catch(err){
+                setError(err.message);//richiamo useState
+            }
+            setIsLoading(false);
+        }*/
+        loadProducts(); //richiamo la funzione sopra
+    },[dispatch,loadProducts]);
 
-    };
+    const selectItemHandler = (id, title) => {
+        props.navigation.navigate('ProductDetail', {
+          productId: id,
+          productTitle: title
+        });
+      };
+
+
+    /**
+         * gestiamo lo state di error e se è vero allora stampo il testo
+         */
+
+        if (error) {
+            return (
+              <View style={styles.spinner}>
+                <Text>An error occurred!</Text>
+                <Button
+                  title="Try again"
+                  onPress={loadProducts}
+                  color={Colors.primary}
+                />
+              </View>
+            );
+          }
+    /**GESTIAMO CON UN CONTROLLO: 
+     * se isLoading è true fa lo spinner fino a quando non ha caricato i prodotti e torna false
+    */
+   if (isLoading) {
+    return (
+      <View style={styles.spinner}>
+        <ActivityIndicator size="large" color={Colors.primary} />
+      </View>
+    );
+  }
+/**
+ * FACCIO UN ALTRO CONTROLLO:
+ * se isLoading è falsa quindi ha caricato gli elementi e ci sono zero elementi allora stampa:
+ * 
+ */
+if (!isLoading && products.length === 0) {
+    return (
+      <View style={styles.spinner}>
+        <Text>No products found. Maybe start adding some!</Text>
+      </View>
+    );
+  }
+
+
+        
+
+
+
 
 
 
@@ -121,7 +204,11 @@ ProductsOverviewScreen.navigationOptions=navData=>{
 }
 
 const styles=StyleSheet.create({
-
+    spinner:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center'
+    }
 });
 
 export default ProductsOverviewScreen;
