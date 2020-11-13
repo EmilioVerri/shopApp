@@ -34,7 +34,7 @@ import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT} from '../actions/product
           */
          case CREATE_PRODUCT:
             const newProduct = new Product(
-              new Date().toString(),
+              action.productData.id,//riprendiamo id definito per Firebase
               'u1',
               action.productData.title,
               action.productData.imageUrl,
