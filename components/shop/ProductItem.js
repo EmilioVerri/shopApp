@@ -40,6 +40,7 @@ const ProductItem = props => {
 };
 
 
+
 const styles = StyleSheet.create({
     product: {
         shadowColor: 'black',

@@ -2,7 +2,7 @@
 import PRODUCTS from '../../data/dummy-data';
 import Product from '../../models/product';
 
-import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT} from '../actions/products';
+import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT,SET_PRODUCTS} from '../actions/products';
 
 /**
  * INITIAL STATE:
@@ -113,6 +113,18 @@ const initialState = {
           product => product.id !== action.pid
         )
       };
+
+      case SET_PRODUCTS:
+
+          return{
+              /**
+               * nella return torniamo availableProducts uguale alla products definita dentro dispatch dell'azione
+               * per la userProducts invece ritorniamo anche qua la products filtrati per id ='u1'
+               */
+              availableProducts:action.products,
+              userProducts:action.products.filter(prod=>prod.id==='u1')
+          }
+
   }
   return state;
 };

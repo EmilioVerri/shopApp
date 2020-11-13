@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import {FlatList,Text,View,StyleSheet,Platform,Button} from 'react-native';
 //facciamo import dello useSelector e la useDispatch
 import{useSelector,useDispatch} from 'react-redux';
@@ -7,6 +7,9 @@ import ProductItem from '../../components/shop/ProductItem';
 
 //importo tutte le azioni di cart
 import * as cartActions from '../../store/actions/cart';
+
+//richiamo azione
+import * as productsActions from '../../store/actions/products';
 
 //importo gli HeaderButton
 import {HeaderButtons,Item} from 'react-navigation-header-buttons';
@@ -27,6 +30,16 @@ const ProductsOverviewScreen=props=>{
     const products=useSelector(state=>state.products.availableProducts);
 
     const dispatch=useDispatch();
+
+    /**definiamo una useEffects per ricevere le informazioni dal DB
+     * e facciamo la dispatch sull'azione productsActions
+     * facendo così ci resituirà un oggetto da fireBase e ogni oggetto è abbinato al suo ID univoco
+     */
+    useEffect(()=>{
+        dispatch(productsActions.fetchProducts());
+    },[
+        dispatch,
+    ]);
 
     const selectItemHandler=(id,title)=>{
         props.navigation.navigate('ProductDetail',
