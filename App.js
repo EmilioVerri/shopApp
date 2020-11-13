@@ -20,6 +20,19 @@ import cartReducer from './store/reducers/cart';
 
 import ordersReducer from './store/reducers/order';
 
+
+//import per mandare richieste http:
+import {applyMiddleware} from 'redux';
+//importo ReduxThunk
+import ReduxThunk from 'redux-thunk';
+
+
+
+
+
+
+
+
 /**
  * la constante rootReducer con il combineReducers ci permette di mappare i reducers
  */
@@ -31,8 +44,10 @@ const rootReducer=combineReducers({
 /**
  * creiamo la constante store che crea lo store e gli passiamo la constante rootReducer come argomento
  * gli passo anche il composeWidthDevTools
+ * 
+ * Definisco anche: applyMiddleware(ReduxThunk) per le chiamate http
  */
-const store=createStore(rootReducer,composeWithDevTools ());
+const store=createStore(rootReducer/*,composeWithDevTools ()*/,applyMiddleware(ReduxThunk));
 
 
 
