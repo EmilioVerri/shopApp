@@ -109,24 +109,23 @@ useEffect(() => {
         */
        const emailRegex = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
        let isValid = true;
-        //i validatori qua sotto ritornano false su isValid se non sono stato validati
-        if (props.required && text.trim().length === 0) {
-            isValid = false;
-          }
-          if (props.email && !emailRegex.test(text.toLowerCase())) {
-            isValid = false;
-          }
-          if (props.min != null && +text < props.min) {
-            isValid = false;
-          }
-          if (props.max != null && +text > props.max) {
-            isValid = false;
-          }
-          if (props.minLength != null && text.length < props.minLength) {
-            isValid = false;
-          }
-          dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
-        };
+       if (props.required && text.trim().length === 0) {
+         isValid = false;
+       }
+       if (props.email && !emailRegex.test(text.toLowerCase())) {
+         isValid = false;
+       }
+       if (props.min != null && +text < props.min) {
+         isValid = false;
+       }
+       if (props.max != null && +text > props.max) {
+         isValid = false;
+       }
+       if (props.minLength != null && text.length < props.minLength) {
+         isValid = false;
+       }
+       dispatch({ type: INPUT_CHANGE, value: text, isValid: isValid });
+     };
 
 /**
  * lostFocusHandler:
@@ -158,30 +157,28 @@ const lostFocusHandler = () => {
   );
 };
 
-
 const styles = StyleSheet.create({
-    formControl: {
-      width: '100%'
-    },
-    label: {
-      fontFamily: 'open-sans-bold',
-      marginVertical: 8
-    },
-    input: {
-      paddingHorizontal: 2,
-      paddingVertical: 5,
-      borderBottomColor: '#ccc',
-      borderBottomWidth: 1
-    },
-    errorContainer: {
-      marginVertical: 5
-    },
-    errorText: {
-      fontFamily: 'open-sans',
-      color: 'red',
-      fontSize: 13
-    }
-  });
-  
-  export default Input;
-  
+  formControl: {
+    width: '100%'
+  },
+  label: {
+    fontFamily: 'open-sans-bold',
+    marginVertical: 8
+  },
+  input: {
+    paddingHorizontal: 2,
+    paddingVertical: 5,
+    borderBottomColor: '#ccc',
+    borderBottomWidth: 1
+  },
+  errorContainer: {
+    marginVertical: 5
+  },
+  errorText: {
+    fontFamily: 'open-sans',
+    color: 'red',
+    fontSize: 13
+  }
+});
+
+export default Input;

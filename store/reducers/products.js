@@ -77,7 +77,8 @@ const initialState = {
          * creo una constante availableProductIndex che ha la stessa funzione della productIndex
          * e faccio la stessa cosa di userProducts con availableProducts
          */
-        case UPDATE_PRODUCT:
+
+case UPDATE_PRODUCT:
       const productIndex = state.userProducts.findIndex(
         prod => prod.id === action.pid
       );
@@ -89,6 +90,7 @@ const initialState = {
         action.productData.description,
         state.userProducts[productIndex].price
       );
+      
       const updatedUserProducts = [...state.userProducts];
       updatedUserProducts[productIndex] = updatedProduct;
       const availableProductIndex = state.availableProducts.findIndex(

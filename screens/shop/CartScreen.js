@@ -72,6 +72,7 @@ return (
           </Text>
         </Text>
         <Button
+          color={Colors.accent}
           title="Order Now"
           disabled={cartItems.length === 0}
           onPress={() => {
@@ -97,19 +98,19 @@ return (
             quantity={itemData.item.quantity}
             title={itemData.item.productTitle}
             amount={itemData.item.sum}
-            deletable //se lo metto così è impostato a true
+            deletable
             onRemove={() => {
-                dispatch(cartActions.removeFromCart(itemData.item.productId));
-              }}
-            />
-          )}
-        />
-      </View>
-    );
-  };
+              dispatch(cartActions.removeFromCart(itemData.item.productId));
+            }}
+          />
+        )}
+      />
+    </View>
+  );
+};
 
 
-  CartScreen.navigationOptions = {
+CartScreen.navigationOptions = {
     headerTitle: 'Your Cart'
   };
   

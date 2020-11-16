@@ -3,6 +3,7 @@ import React,{useState} from 'react';
 import { Button, Text, View, StyleSheet, Platform } from 'react-native';
 
 import CartItem from './CartItem';
+import Colors from '../../constants/Colors';
 
 
 const OrderItem = props => {

@@ -4,6 +4,7 @@ import {useSelector,useDispatch} from 'react-redux';
 
 //importo tutte le azioni di cart
 import * as cartActions from '../../store/actions/cart';
+import Colors from '../../constants/Colors';
 
 
 const ProductDetailScreen=props=>{
@@ -45,36 +46,35 @@ const ProductDetailScreen=props=>{
       );
     };
     
-
     ProductDetailScreen.navigationOptions = navData => {
-        return {
-          headerTitle: navData.navigation.getParam('productTitle')
-        };
+      return {
+        headerTitle: navData.navigation.getParam('productTitle')
       };
-
-      const styles = StyleSheet.create({
-        image: {
-          width: '100%',
-          height: 300
-        },
-        actions: {
-          marginVertical: 10,
-          alignItems: 'center'
-        },
-        price: {
-          fontSize: 20,
-          color: '#888',
-          textAlign: 'center',
-          marginVertical: 20,
-          fontFamily: 'open-sans-bold'
-        },
-        description: {
-          fontFamily: 'open-sans',
-          fontSize: 14,
-          textAlign: 'center',
-          marginHorizontal: 20
-        }
-      });
-      
-      export default ProductDetailScreen;
-      
+    };
+    
+    const styles = StyleSheet.create({
+      image: {
+        width: '100%',
+        height: 300
+      },
+      actions: {
+        marginVertical: 10,
+        alignItems: 'center'
+      },
+      price: {
+        fontSize: 20,
+        color: '#888',
+        textAlign: 'center',
+        marginVertical: 20,
+        fontFamily: 'open-sans-bold'
+      },
+      description: {
+        fontFamily: 'open-sans',
+        fontSize: 14,
+        textAlign: 'center',
+        marginHorizontal: 20
+      }
+    });
+    
+    export default ProductDetailScreen;
+    

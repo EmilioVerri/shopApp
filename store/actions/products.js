@@ -36,14 +36,13 @@ if (!response.ok) {
   }
 
   dispatch({ type: SET_PRODUCTS, products: loadedProducts });
-    }
-      /**gestisco gli errori con la catch */
-      catch (err) {
-        // send to custom analytics server
-        throw err;
-    }
-  };
+} catch (err) {
+  // send to custom analytics server
+  throw err;
+}
 };
+};
+
 
 
 
@@ -57,16 +56,18 @@ export const DELETE_PRODUCT = 'DELETE_PRODUCT';
  */
 export const deleteProduct = productId => {
     return async dispatch => {
-      await fetch(
+      const response = await fetch(
         `https://rn-shopapp-fb5e0.firebaseio.com/products/${productId}.json`,
         {
           method: 'DELETE'
         }
       );
+      if (!response.ok) {
+        throw new Error('Something went wrong!');
+      }
       dispatch({ type: DELETE_PRODUCT, pid: productId });
     };
-   /* return { type: DELETE_PRODUCT, pid: productId };*/
-};
+  };
 
 
 
@@ -92,10 +93,7 @@ export const CREATE_PRODUCT = 'CREATE_PRODUCT';
  *con .then() otteniamo la risposta in modo da lavorarci
  inserendo async prima di dispatch posso archiviare la mia fetch dentro una constante è come usare then() ma in modo più facile restituisce una promessa
  await response.json(); ci ritornerà i dati di fireBase quando aggiungiamo un prodotto
-
-
 https://rn-shopapp-fb5e0.firebaseio.com/products.json
-
  */
 export const createProduct = (title, description, imageUrl, price) => {
     return async dispatch => {
@@ -153,31 +151,37 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
 
 export const updateProduct = (id, title, description, imageUrl) => {
     return async dispatch => {
-      await fetch(
+      const response = await fetch(
         `https://rn-shopapp-fb5e0.firebaseio.com/products/${id}.json`,
         {
-          method: 'PATCH',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            title,
-            description,
-            imageUrl
-          })
-        }
-      );
-  
-      dispatch({
-        type: UPDATE_PRODUCT,
-        pid: id,
-        productData: {
-          title,
-          description,
-          imageUrl
-        }
-      });
-    };
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              title,
+              description,
+              imageUrl
+            })
+          }
+        );
+        if (!response.ok) {
+            throw new Error('Something went wrong!');
+          }
+      
+          dispatch({
+            type: UPDATE_PRODUCT,
+            pid: id,
+            productData: {
+              title,
+              description,
+              imageUrl
+            }
+          });
+        };
+
+        
+      
    /* return {
         type: UPDATE_PRODUCT,
         pid: id,
@@ -187,7 +191,7 @@ export const updateProduct = (id, title, description, imageUrl) => {
             imageUrl
         }
     };*/
-};
+
 
 
 /**
@@ -213,8 +217,4 @@ export const updateProduct = (id, title, description, imageUrl) => {
  * 
  */
 
-
-
-  
-
-
+};

@@ -88,13 +88,14 @@ const UserProductsScreen=props=>{
               <Button
                 color={Colors.primary}
                 title="Delete"
-                onPress={deleteHandler.bind(this, itemData.item.id)}//gli passo l'id alla allert sopra
+                onPress={deleteHandler.bind(this, itemData.item.id)}
               />
             </ProductItem>
           )}
         />
       );
     };
+    
 
 
     UserProductsScreen.navigationOptions = navData => {
@@ -126,7 +127,5 @@ headerRight: (
     )
   };
 };
-const style=StyleSheet.create({
-});
 
 export default UserProductsScreen;

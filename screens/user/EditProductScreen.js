@@ -1,6 +1,6 @@
 //la useReducer viene utilizzata quando ci sono molti stati molto simili tra di loro
 import React, { useState, useEffect, useCallback, useReducer } from 'react';//usiamo useState per salvare l'input dell'utente
-import { ScrollView, Text, View, StyleSheet, Platform, TextInput, Alert,KeyboardAvoidingView} from 'react-native';
+import { ScrollView, Text, View, StyleSheet, Platform, TextInput, Alert,KeyboardAvoidingView,ActivityIndicator} from 'react-native';
 //importo gli HeaderButton
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import HeaderButton from '../../components/UI/HeaderButton';
@@ -8,7 +8,7 @@ import HeaderButton from '../../components/UI/HeaderButton';
 //importo lo useSelector
 import { useSelector, useDispatch } from 'react-redux';
 import * as productsActions from '../../store/actions/products';
-
+import Colors from '../../constants/Colors';
 import Input from '../../components/UI/Input';
 
 
@@ -22,12 +22,10 @@ import Input from '../../components/UI/Input';
  tutti gli stati iniziali dell'inputValues contenuti, va a richiamarlo dalla useReducer
  e voglio sostituire i valori che ci sono già con i valori inseriti nell'input
  diamo come chiave l'azione che viene chiamata e come valore il valore che viene passato da quella azione
-
  2) faccio update della Validities definendo una constante updatedValidities che restituisce un ogggetto che contiene:
  tutti gli stati iniziali dell'inputValidities contenuti, va a richiamarlo dalla useReducer
  e voglio sostituire i valori che ci sono già con i valori inseriti nell'input
  diamo come chiave l'azione che viene chiamata e come valore siccome è un boolean il valore true o false della isValid
-
  3)faccio update della formIsValid
 definisco variabile formIsValid e la metto uguale a true
 faccio ciclo for che cicla tutte le chiavi dentro updatedvalidities e se tutti i valori su updatedValidities è true allora anche questo ritorna true
@@ -35,10 +33,7 @@ se anche solo un elemento è falso ritorna false , esamina tutti i form per la k
  
  ritorneremo un nuovo stato che sostituisce inputValues con la constante updatedValues e 
  sostituisce inputValidities con la constante updatedValidities
-
  e sostituisco la vecchia formIsValid con la nuova updatedFormIsValid
-
-
  */
 
 
@@ -46,26 +41,26 @@ se anche solo un elemento è falso ritorna false , esamina tutti i form per la k
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
-    if (action.type === FORM_INPUT_UPDATE) {
-      const updatedValues = {
-        ...state.inputValues,
-        [action.input]: action.value
-      };
-      const updatedValidities = {
-        ...state.inputValidities,
-        [action.input]: action.isValid
-      };
-      let updatedFormIsValid = true;
-      for (const key in updatedValidities) {
-        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
-      }
-      return {
-        formIsValid: updatedFormIsValid,
-        inputValidities: updatedValidities,
-        inputValues: updatedValues
-      };
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
     }
-    return state;//se qualcosa va male restituisco l'ultimo stato salvato 
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;//se qualcosa va male restituisco l'ultimo stato salvato 
 };
 
 
@@ -74,6 +69,9 @@ const formReducer = (state, action) => {
 
 
 const EditProductScreen = props => {
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState();
     /** EditProductScreen:
  * definisco useState per salvare i dati dell'utente
  * e creo tanti useState quanti i campi di input che ho fatto dentro alla return
@@ -95,11 +93,12 @@ const EditProductScreen = props => {
 */
 
 
+
 const prodId = props.navigation.getParam('productId');
-const editedProduct = useSelector(state =>
-  state.products.userProducts.find(prod => prod.id === prodId)
-);
-const dispatch = useDispatch();
+  const editedProduct = useSelector(state =>
+    state.products.userProducts.find(prod => prod.id === prodId)
+  );
+  const dispatch = useDispatch();
     /**
      * DEFINIAMO UNA USEREDUCER,
      * che è uguale ad una destrutturazione sulla formState e su dispatchFormState
@@ -132,6 +131,13 @@ const dispatch = useDispatch();
       });
 
 
+      useEffect(() => {
+        if (error) {
+          Alert.alert('An error occurred!', error, [{ text: 'Okay' }]);
+        }
+      }, [error]);
+    
+
 
 
 
@@ -156,33 +162,42 @@ const dispatch = useDispatch();
      */
    
 
-    const submitHandler = useCallback(() => {
+    const submitHandler = useCallback(async () => {
         if (!formState.formIsValid) {
           Alert.alert('Wrong input!', 'Please check the errors in the form.', [
             { text: 'Okay' }
           ]);
           return;
         }
-        if (editedProduct) {
-          dispatch(
-            productsActions.updateProduct(
-              prodId,
-              formState.inputValues.title,
-              formState.inputValues.description,
-              formState.inputValues.imageUrl
-            )
-          );
-        } else {
-          dispatch(
-            productsActions.createProduct(
-              formState.inputValues.title,
-              formState.inputValues.description,
-              formState.inputValues.imageUrl,
-              +formState.inputValues.price
-            )
-          );
+        setError(null);
+        setIsLoading(true);
+        try {
+          if (editedProduct) {
+            await dispatch(
+              productsActions.updateProduct(
+                prodId,
+                formState.inputValues.title,
+                formState.inputValues.description,
+                formState.inputValues.imageUrl
+              )
+            );
+          } else {
+            await dispatch(
+              productsActions.createProduct(
+                formState.inputValues.title,
+                formState.inputValues.description,
+                formState.inputValues.imageUrl,
+                +formState.inputValues.price
+              )
+            );
+          }
+          props.navigation.goBack();
+        } catch (err) {
+          setError(err.message);
         }
-        props.navigation.goBack();
+    
+        setIsLoading(false);
+        
       }, [dispatch, prodId, formState]);
     
       useEffect(() => {
@@ -238,6 +253,16 @@ const dispatch = useDispatch();
         },
         [dispatchFormState]
       );
+
+
+
+      if (isLoading) {
+        return (
+          <View style={styles.centered}>
+            <ActivityIndicator size="large" color={Colors.primary} />
+          </View>
+        );
+      }
 
     /**RETURN:
      * nella return creiamo dei campi di testo di input e dentro ad essi l'utente inserirà le informazioni

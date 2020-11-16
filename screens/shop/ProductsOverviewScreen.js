@@ -60,6 +60,7 @@ const [error, setError] = useState();
         }
         setIsLoading(false);
       }, [dispatch, setIsLoading, setError]);
+    
       
 
       /**imposto un ascoltatore di eventi di navigazione:
@@ -79,10 +80,9 @@ const [error, setError] = useState();
         );
     
         return () => {
-          willFocusSub.remove();
-        };
-      }, [loadProducts]);
-
+            willFocusSub.remove();
+          };
+        }, [loadProducts]);
 
      /**per gestire gli errori faccio una try e una catch qua dentro */
     useEffect(()=>{
@@ -120,7 +120,7 @@ const [error, setError] = useState();
                 <Button
                   title="Try again"
                   onPress={loadProducts}
-                  color={Colors.primary}
+                  color={Colors.secondo}
                 />
               </View>
             );
@@ -131,7 +131,7 @@ const [error, setError] = useState();
    if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator size="large" color={Colors.primary} />
+        <ActivityIndicator size="large" color={Colors.secondo} />
       </View>
     );
   }
@@ -196,13 +196,15 @@ if (!isLoading && products.length === 0) {
         }}*/ >
 
 
-            <Button color={Colors.secondo}  
+<Button
+            color={Colors.primary}
             title="View Details"
             onPress={() => {
               selectItemHandler(itemData.item.id, itemData.item.title);
             }}
           />
-            <Button color={Colors.ottavo}  
+          <Button
+            color={Colors.primary}
             title="To Cart"
             onPress={() => {
               dispatch(cartActions.addToCart(itemData.item));
@@ -214,7 +216,6 @@ if (!isLoading && products.length === 0) {
   );
 };
 
-
 ProductsOverviewScreen.navigationOptions = navData => {
     return {
       headerTitle: 'All Products',
@@ -224,29 +225,28 @@ ProductsOverviewScreen.navigationOptions = navData => {
             title="Menu"
             iconName={Platform.OS === 'android' ? 'md-menu' : 'ios-menu'}
             onPress={() => {
-              navData.navigation.toggleDrawer();//scrivendo questo appena clicco il bottone apre il menù
+              navData.navigation.toggleDrawer();
             }}
-            />
-          </HeaderButtons>
-        ),
-    
-        headerRight: (
-            <HeaderButtons HeaderButtonComponent={HeaderButton}>
-              <Item
-                title="Cart"
-                iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
-                onPress={() => {
-                  navData.navigation.navigate('Cart');
-                }}
-              />
-            </HeaderButtons>
-          )
-        };
-      };
-
-      const styles = StyleSheet.create({
-        centered: { flex: 1, justifyContent: 'center', alignItems: 'center' }
-      });
-      
-      export default ProductsOverviewScreen;
-      
+          />
+        </HeaderButtons>
+      ),
+      headerRight: (
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
+          <Item
+            title="Cart"
+            iconName={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
+            onPress={() => {
+              navData.navigation.navigate('Cart');
+            }}
+          />
+        </HeaderButtons>
+      )
+    };
+  };
+  
+  const styles = StyleSheet.create({
+    centered: { flex: 1, justifyContent: 'center', alignItems: 'center' }
+  });
+  
+  export default ProductsOverviewScreen;
+  
