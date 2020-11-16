@@ -8,7 +8,7 @@ import Colors from '../../constants/Colors';
 import {Platform} from 'react-native';
 
 
-const CustomHeaderButton=props=>{
+const CustomHeaderButton = props => {
  
 
 
@@ -16,10 +16,15 @@ const CustomHeaderButton=props=>{
      * NELLA RETURN DEFINISCO DENTRO HEADERBUTTON:
      * props così ricevo tutti gli oggetti stile e poi gli passo le descrizioni delle icone
      */
-    return(
-        <HeaderButton {...props} IconComponent={Ionicons} iconSize={23} color={Platform.OS==='android'?'white':Colors.quinto}/>
-    );
-};
-
-
-export default CustomHeaderButton;
+    return (
+        <HeaderButton
+          {...props}
+          IconComponent={Ionicons}
+          iconSize={23}
+          color={Platform.OS === 'android' ? 'white' : Colors.quinto}
+        />
+      );
+    };
+    
+    export default CustomHeaderButton;
+    

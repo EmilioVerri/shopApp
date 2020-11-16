@@ -6,23 +6,23 @@ import { ADD_ORDER } from "../actions/order";
 
 import { DELETE_PRODUCT } from "../actions/products";
 
-const initialState={
-    items:[],
-    totalAmount:0
-};
+const initialState = {
+    items: {},
+    totalAmount: 0
+  };
 
-export default(state=initialState,action)=>{
+  export default (state = initialState, action) => {
     /**
      * FACCIO LO SWITCH SULLE AZIONI:
      * 1) case salvo nella constante addedProduct quello che c'è in product definito nell'azione, all'interno di esso ci sarà la descrizione del prodotto
      * definisco una constante prodPrice nella quale salvo il prezzo del prodotto al suo interno, faccio lo stesso per i titolo
      * 
      */
-    switch(action.type){
+    switch (action.type) {
         case ADD_TO_CART:
-            const addedProduct=action.product;
-            const prodPrice=addedProduct.price;
-            const prodTitle=addedProduct.title;
+          const addedProduct = action.product;
+          const prodPrice = addedProduct.price;
+          const prodTitle = addedProduct.title;
 
             /**
              * creo una variabile che farà da contenitore per tutti
@@ -51,33 +51,24 @@ export default(state=initialState,action)=>{
              * 
              */
 
-                let updateOrNewCarItem;
+            let updatedOrNewCartItem;
 
-
-            if(state.items[addedProduct.id]){
-                //already have the item in the cart
-                updateOrNewCarItem= new CartItem(
-                    state.items[addedProduct.id].quantity+1,
-                    prodPrice,
-                    prodTitle,
-                    state.items[addedProduct.id].sum+ prodPrice
+            if (state.items[addedProduct.id]) {
+                // already have the item in the cart
+                updatedOrNewCartItem = new CartItem(
+                  state.items[addedProduct.id].quantity + 1,
+                  prodPrice,
+                  prodTitle,
+                  state.items[addedProduct.id].sum + prodPrice
                 );
-
-                return{
-                    ...state,
-                    items:{...state.items,[addedProduct.id]:updateOrNewCarItem},
-                    totalAmount:state.totalAmount+prodPrice
-
-                }
-
-            }else{
-                updateOrNewCarItem=new CartItem(1,prodPrice,prodTitle,prodPrice);
-                return {
-                    ...state,
-                    items:{...state.items,[addedProduct.id]:updateOrNewCarItem},
-                    totalAmount:state.totalAmount+prodPrice
-                }
-            }
+              } else {
+                updatedOrNewCartItem = new CartItem(1, prodPrice, prodTitle, prodPrice);
+              }
+              return {
+                ...state,
+                items: { ...state.items, [addedProduct.id]: updatedOrNewCartItem },
+                totalAmount: state.totalAmount + prodPrice
+              };
             /**
              * DEFINISCO NUOVO CASE NEL CASO DELLA REMOVE DAL CARRELLO
              * ricaviamo la quantità prendendo lo state e andando ad utilizzare il productId che gli viene passato nella actions,
@@ -104,29 +95,31 @@ export default(state=initialState,action)=>{
              * e il totale sarà uguale allo stato copiato sopra del totale meno il prezzo del action.pid che viene passato
              * DOPO DI QUESTO POSSO MANDARE L'AZIONE DAL CARTSCREEN
              */
-        case REMOVE_FROM_CART:
-            const selectedCartItem=state.items[action.pid];
-            const currentQty=state.items[action.pid].quantity;
-            let updatedCartItems;
-            if(currentQty>1){
-                const updatedCart=new CartItem(
-                    selectedCartItem.quantity-1, 
+            case REMOVE_FROM_CART:
+                const selectedCartItem = state.items[action.pid];
+                const currentQty = selectedCartItem.quantity;
+                let updatedCartItems;
+                if (currentQty > 1) {
+                  // need to reduce it, not erase it
+                  const updatedCartItem = new CartItem(
+                    selectedCartItem.quantity - 1,
                     selectedCartItem.productPrice,
                     selectedCartItem.productTitle,
-                    selectedCartItem.sum-selectedCartItem.productPrice);
-                    updatedCartItems={...state.items,[action.pid]:updatedCart}
-            }else{
-                updatedCartItems={...state.items};
-                delete updatedCartItems[action.pid];
-            }
-            return{
-                ...state,
-                items:updatedCartItems,
-                totalAmount:state.totalAmount-selectedCartItem.productPrice
-            }
+                    selectedCartItem.sum - selectedCartItem.productPrice
+                  );
+                  updatedCartItems = { ...state.items, [action.pid]: updatedCartItem };
+                } else {
+                  updatedCartItems = { ...state.items };
+                  delete updatedCartItems[action.pid];
+                }
+                return {
+                  ...state,
+                  items: updatedCartItems,
+                  totalAmount: state.totalAmount - selectedCartItem.productPrice
+                };
             /**QUANDO CLICCHIAMO SU ORDINA SE RITONO L'INITIALSTATE IL CARRELLO SI SVUOTERA */
             case ADD_ORDER:
-                return initialState;
+      return initialState;
 
 
             /**
@@ -149,19 +142,18 @@ export default(state=initialState,action)=>{
              * adesso dobbiamo lanciare questa azione dentro USERPRODUCTSSCREEN
              */
             case DELETE_PRODUCT:
-                if (!state.items[action.pid]) {
-                  return state;
-                }
-                const updatedItems = { ...state.items };
-                const itemTotal = state.items[action.pid].sum;
-                delete updatedItems[action.pid];
-                return {
-                  ...state,
-                  items: updatedItems,
-                  totalAmount: state.totalAmount - itemTotal
-                };
-    }
+      if (!state.items[action.pid]) {
+        return state;
+      }
+      const updatedItems = { ...state.items };
+      const itemTotal = state.items[action.pid].sum;
+      delete updatedItems[action.pid];
+      return {
+        ...state,
+        items: updatedItems,
+        totalAmount: state.totalAmount - itemTotal
+      };
+  }
 
-            
-    return state;
+  return state;
 };

@@ -3,13 +3,12 @@ import {ADD_ORDER} from '../actions/order';
 import Order from '../../models/order';
 
 
-const initialState={
-    orders:[]
-};
+const initialState = {
+    orders: []
+  };
 
-
-export default (state=initialState,action)=>{
-    switch(action.type){
+  export default (state = initialState, action) => {
+    switch (action.type) {
         /**
          * CASE ADD_ORDER:
          * creo una constante che mi permette di creare un nuovo ordine di dummy-data
@@ -22,15 +21,18 @@ export default (state=initialState,action)=>{
          * e dentro concat, concateno la constante  newOrder
          */
         case ADD_ORDER:
-            const newOrder=new Order(new Date().toString(),
-            action.orderData.items,
-            action.orderData.amount,
-            new Date());
-            return{
-                ...state,
-                orders:state.orders.concat(newOrder)
-            }
-
-    }
-    return state;
-};
+            const newOrder = new Order(
+              new Date().toString(),
+              action.orderData.items,
+              action.orderData.amount,
+              new Date()
+            );
+            return {
+              ...state,
+              orders: state.orders.concat(newOrder)
+            };
+        }
+      
+        return state;
+      };
+      

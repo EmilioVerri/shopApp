@@ -46,25 +46,25 @@ se anche solo un elemento è falso ritorna false , esamina tutti i form per la k
 const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
 
 const formReducer = (state, action) => {
-  if (action.type === FORM_INPUT_UPDATE) {
-    const updatedValues = {
-      ...state.inputValues,
-      [action.input]: action.value
-    };
-    const updatedValidities = {
-      ...state.inputValidities,
-      [action.input]: action.isValid
-    };
-    let updatedFormIsValid = true;
-    for (const key in updatedValidities) {
-      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    if (action.type === FORM_INPUT_UPDATE) {
+      const updatedValues = {
+        ...state.inputValues,
+        [action.input]: action.value
+      };
+      const updatedValidities = {
+        ...state.inputValidities,
+        [action.input]: action.isValid
+      };
+      let updatedFormIsValid = true;
+      for (const key in updatedValidities) {
+        updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+      }
+      return {
+        formIsValid: updatedFormIsValid,
+        inputValidities: updatedValidities,
+        inputValues: updatedValues
+      };
     }
-    return {
-      formIsValid: updatedFormIsValid,
-      inputValidities: updatedValidities,
-      inputValues: updatedValues
-    };
-  }
     return state;//se qualcosa va male restituisco l'ultimo stato salvato 
 };
 
@@ -99,6 +99,7 @@ const prodId = props.navigation.getParam('productId');
 const editedProduct = useSelector(state =>
   state.products.userProducts.find(prod => prod.id === prodId)
 );
+const dispatch = useDispatch();
     /**
      * DEFINIAMO UNA USEREDUCER,
      * che è uguale ad una destrutturazione sulla formState e su dispatchFormState
@@ -153,7 +154,7 @@ const editedProduct = useSelector(state =>
      * nella submitHandler dobbiamo specificare le dipendenze della useCallBack, saranno:
      * 1) dispatch / 2)prodId /3) title 4) description / 5) imageUrl / 6) price QUESTI SONO TUTTI GLI ELEMENTI CHE PASSO AD UN ACTIONS
      */
-    const dispatch = useDispatch();
+   
 
     const submitHandler = useCallback(() => {
         if (!formState.formIsValid) {
@@ -183,7 +184,7 @@ const editedProduct = useSelector(state =>
         }
         props.navigation.goBack();
       }, [dispatch, prodId, formState]);
-
+    
       useEffect(() => {
         props.navigation.setParams({ submit: submitHandler });
       }, [submitHandler]);
@@ -257,20 +258,20 @@ const editedProduct = useSelector(state =>
      */
     return (
         <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior="padding"
-        keyboardVerticalOffset={100}
-      >
-        <ScrollView>
-        <View style={styles.form}>
-          <Input
-            id="title"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
-            label="Title"
-            errorText="Please enter a valid title!"
-            keyboardType="default"
-            autoCapitalize="sentences"
-            autoCorrect
-            returnKeyType="next"
+          style={{ flex: 1 }}
+          behavior="padding"
+          keyboardVerticalOffset={100}
+        >
+          <ScrollView>
+            <View style={styles.form}>
+              <Input
+                id="title"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
+                label="Title"
+                errorText="Please enter a valid title!"
+                keyboardType="default"
+                autoCapitalize="sentences"
+                autoCorrect
+                returnKeyType="next"
                     //deve ricevere 2 argomenti preso dalla useEffects
                     //onInputChange={inputChangeHandler.bind(this,'title')} RIMUOVO IL BIND PER COLPA USECALLBACK
                     onInputChange={inputChangeHandler}
@@ -278,59 +279,58 @@ const editedProduct = useSelector(state =>
                     initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
                     //lo inserisco per definire le validazioni:
                     required
-                    />
+          />
 
-                <Input
-                id='imageUrl'// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
-                    label='Image Url'
-                    errorText="Please enter a valid image url!"
-                    keyboardType='default'
-                    returnKeyType='next' 
+<Input
+            id="imageUrl"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
+            label="Image Url"
+            errorText="Please enter a valid image url!"
+            keyboardType="default"
+            returnKeyType="next"
                      //onInputChange={inputChangeHandler.bind(this,'price')} RIMUOVO IL BIND PER COLPA USECALLBACK
-                    onInputChange={inputChangeHandler}
-                    initialValue={editedProduct?editedProduct.imageUrl:''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
-                    initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.imageUrl : ''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
+            initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
                     //lo inserisco per definire le validazioni:
-                    required
-                    minLength={5}//minimo 5 caratteri
+            required
                     />
 
-                {editedProduct ? null :
-                    <Input
-                    id='price' // AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
-                        label='Price'
-                        errorText="Please enter a valid price!"
-                        keyboardType='decimal-pad'
-                        returnKeyType='next' 
+{editedProduct ? null : (
+            <Input
+              id="price"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
+              label="Price"
+              errorText="Please enter a valid price!"
+              keyboardType="decimal-pad"
+              returnKeyType="next"
                          //onInputChange={inputChangeHandler.bind(this,'price')} RIMUOVO IL BIND PER COLPA USECALLBACK
-                        onInputChange={inputChangeHandler}
+            onInputChange={inputChangeHandler}
                         //price non avrà l'initialValue
                         //lo inserisco per definire le validazioni:
-                    required
-                    min={0.1}//zero punto 1 è il numero più piccolo che dobbiamo inserire
-                        />}
+                        required
+                        min={0.1}//zero punto 1 è il numero più piccolo che dobbiamo inserire
+                        />)}
 
-                <Input
-                id='description'// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
-                    label='Description'
-                    errorText="Please enter a valid description!"
-                    keyboardType='default'
-                    autoCapitalize='sentences'
-                    autoCorrect
-                    multiline
-                    numberOfLines={3}
+<Input
+            id="description"// AL POSTO DI FARE LA BIND PER TUTTI INSERISCO ID E LO RICHIAMO NELLA INPUT.JS
+            label="Description"
+            errorText="Please enter a valid description!"
+            keyboardType="default"
+            autoCapitalize="sentences"
+            autoCorrect
+            multiline
+            numberOfLines={3}
                      //onInputChange={inputChangeHandler.bind(this,'description')} RIMUOVO IL BIND PER COLPA USECALLBACK
-                    onInputChange={inputChangeHandler}
-                    initialValue={editedProduct?editedProduct.description:''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
-                    initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
-                    required
-                    minLength={5}
-                     />
-            </View>
-        </ScrollView>
+            onInputChange={inputChangeHandler}
+            initialValue={editedProduct ? editedProduct.description : ''}//se editedProduct è true allora initialValue sarà il titolo senò sarà vuoto
+            initiallyValid={!!editedProduct}//se non abbiamo prodotti modificati allora questo non può essere inizialmente valido quindi passo false
+            required
+            minLength={5}
+          />
+        </View>
+      </ScrollView>
     </KeyboardAvoidingView>
-    );
-}
+  );
+};
 
 
 EditProductScreen.navigationOptions = navData => {
@@ -369,4 +369,5 @@ const styles = StyleSheet.create({
   });
   
   export default EditProductScreen;
+  
   

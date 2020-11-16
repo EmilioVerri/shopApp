@@ -36,50 +36,55 @@ import ReduxThunk from 'redux-thunk';
 /**
  * la constante rootReducer con il combineReducers ci permette di mappare i reducers
  */
-const rootReducer=combineReducers({
-    products:productsReducer,
-    cart:cartReducer,
-    orders:ordersReducer
-});
+const rootReducer = combineReducers({
+    products: productsReducer,
+    cart: cartReducer,
+    orders: ordersReducer
+  });
 /**
  * creiamo la constante store che crea lo store e gli passiamo la constante rootReducer come argomento
  * gli passo anche il composeWidthDevTools
  * 
  * Definisco anche: applyMiddleware(ReduxThunk) per le chiamate http
  */
-const store=createStore(rootReducer/*,composeWithDevTools ()*/,applyMiddleware(ReduxThunk));
+const store = createStore(rootReducer/*,composeWithDevTools ()*/, applyMiddleware(ReduxThunk));
 
 
 
 //queste 4 righe si riferiscono ai fonts
-const  fetchFonts=()=>{
+const fetchFonts = () => {
     return Font.loadAsync({
-        'open-sans':require('./assets/fonts/OpenSans-Regular.ttf'),
-        'open-sans-bold':require('./assets/fonts/OpenSans-Bold.ttf')
-    })
-    };
+      'open-sans': require('./assets/fonts/OpenSans-Regular.ttf'),
+      'open-sans-bold': require('./assets/fonts/OpenSans-Bold.ttf')
+    });
+  };
     
     
    
     
 
-export default function App() {
+  export default function App() {
 
     //definisco il richiamo dei fonts
     const[fontLoaded,setFontLoaded]=useState(false);
-    if(!fontLoaded){
-        return <AppLoading 
-        startAsync={fetchFonts}
-        onFinish={()=>setFontLoaded(true)}/>
-    }//fine richiamo fonts
+    if (!fontLoaded) {
+        return (
+          <AppLoading
+            startAsync={fetchFonts}
+            onFinish={() => {
+              setFontLoaded(true);
+            }}
+          />
+        );
+      }//fine richiamo fonts
 
     /**
      * nella RETURN DI APP:
      * definisco Provider e con store gli passo la constante definita sopra store
      */
-  return (
-    <Provider store={store}>
-        <ShopNavigator />
-    </Provider>
-  );
-}
+    return (
+        <Provider store={store}>
+          <ShopNavigator />
+        </Provider>
+      );
+    }

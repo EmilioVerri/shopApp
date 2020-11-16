@@ -2,12 +2,70 @@
 import Product from '../../models/product';
 
 
+export const SET_PRODUCTS = 'SET_PRODUCTS';
+
+export const fetchProducts = () => {
+    return async dispatch => {
+      // any async code you want!
+      //mettiamo tutto il codice dentro ad una try così possiamo gestire gli errori
+      try {
+        const response = await fetch(
+          'https://rn-shopapp-fb5e0.firebaseio.com/products.json'
+        );
+/**se ritorna un 200 e quindi si è connessi con il link sopra ritorna un 200=ok
+ * se response.ok è falso allora restituisci la frase di errore e lo gestiamo dentro ProductsOverviewScreen
+ */
+if (!response.ok) {
+    throw new Error('Something went wrong!');
+  }
+
+  const resData = await response.json();
+  const loadedProducts = [];
+
+  for (const key in resData) {
+    loadedProducts.push(
+      new Product(
+        key,
+        'u1',
+        resData[key].title,
+        resData[key].imageUrl,
+        resData[key].description,
+        resData[key].price
+      )
+    );
+  }
+
+  dispatch({ type: SET_PRODUCTS, products: loadedProducts });
+    }
+      /**gestisco gli errori con la catch */
+      catch (err) {
+        // send to custom analytics server
+        throw err;
+    }
+  };
+};
+
+
+
 /**definisco un azione per la delete */
 
 export const DELETE_PRODUCT = 'DELETE_PRODUCT';
 
+/**per a delete facciamo la più o meno la stessa cosa dell'update
+ * gestisco anche qua la delete per id utilizzando back-tips Alt+96
+ * per l'eliminazione il metodo sarà DELETE e non avremo bisogno di una header e di una body
+ */
 export const deleteProduct = productId => {
-    return { type: DELETE_PRODUCT, pid: productId };
+    return async dispatch => {
+      await fetch(
+        `https://rn-shopapp-fb5e0.firebaseio.com/products/${productId}.json`,
+        {
+          method: 'DELETE'
+        }
+      );
+      dispatch({ type: DELETE_PRODUCT, pid: productId });
+    };
+   /* return { type: DELETE_PRODUCT, pid: productId };*/
 };
 
 
@@ -36,40 +94,43 @@ export const CREATE_PRODUCT = 'CREATE_PRODUCT';
  await response.json(); ci ritornerà i dati di fireBase quando aggiungiamo un prodotto
 
 
-
+https://rn-shopapp-fb5e0.firebaseio.com/products.json
 
  */
 export const createProduct = (title, description, imageUrl, price) => {
     return async dispatch => {
-        // any async code you want!
-        const response = await fetch('https://rn-shopapp-fb5e0.firebaseio.com/products.json', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                title,
-                description,
-                imageUrl,
-                price
-            })
-        });
+      // any async code you want!
+      const response = await fetch(
+        'https://rn-shopapp-fb5e0.firebaseio.com/products.json',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            imageUrl,
+            price
+          })
+        }
+      );
+  
+      const resData = await response.json();
 
-        const resData = await response.json();
-        console.log(resData);
 
-
-        dispatch({
-            type: CREATE_PRODUCT,
-            productData: {
-                id: resData.name, //inviamo id del prodotto a fireBase quindi in products Reducer adesso possiamo passare id
-                title,
-                description,
-                imageUrl,
-                price
-            }
-        });
+      dispatch({
+        type: CREATE_PRODUCT,
+        productData: {
+          id: resData.name, //inviamo id del prodotto a fireBase quindi in products Reducer adesso possiamo passare id
+          title,
+          description,
+          imageUrl,
+          price
+        }
+      });
     };
+  
 
 
 
@@ -84,10 +145,40 @@ export const createProduct = (title, description, imageUrl, price) => {
 
 
 export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
+/**per azione di update dobbiamo passare l'elemento dell'update al db
+ * utilizziamo i back-tips per la modifica del prodotto a secondo dell'id selezionato dall'utente
+ * per fare i back-tips Alt+96 per aggiornare gli passiamo la PUT O LA PATCH
+ */
 
 
 export const updateProduct = (id, title, description, imageUrl) => {
-    return {
+    return async dispatch => {
+      await fetch(
+        `https://rn-shopapp-fb5e0.firebaseio.com/products/${id}.json`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            title,
+            description,
+            imageUrl
+          })
+        }
+      );
+  
+      dispatch({
+        type: UPDATE_PRODUCT,
+        pid: id,
+        productData: {
+          title,
+          description,
+          imageUrl
+        }
+      });
+    };
+   /* return {
         type: UPDATE_PRODUCT,
         pid: id,
         productData: {
@@ -95,7 +186,7 @@ export const updateProduct = (id, title, description, imageUrl) => {
             description,
             imageUrl
         }
-    };
+    };*/
 };
 
 
@@ -122,50 +213,7 @@ export const updateProduct = (id, title, description, imageUrl) => {
  * 
  */
 
-export const SET_PRODUCTS = 'SET_PRODUCTS';
 
-
-
-export const fetchProducts = () => {
-    return async dispatch => {
-      // any async code you want!
-      //mettiamo tutto il codice dentro ad una try così possiamo gestire gli errori
-      try {
-        const response = await fetch(
-            'https://rn-shopapp-fb5e0.firebaseio.com/products.json'
-        );
-/**se ritorna un 200 e quindi si è connessi con il link sopra ritorna un 200=ok
- * se response.ok è falso allora restituisci la frase di errore e lo gestiamo dentro ProductsOverviewScreen
- */
-if (!response.ok) {
-    throw new Error('Something went wrong!');
-  }
-      
-  const resData = await response.json();
-  const loadedProducts = [];
-
-  for (const key in resData) {
-    loadedProducts.push(
-      new Product(
-        key,
-        'u1',
-        resData[key].title,
-        resData[key].imageUrl,
-        resData[key].description,
-        resData[key].price
-      )
-    );
-  }
-
-  dispatch({ type: SET_PRODUCTS, products: loadedProducts });
-      }
-      /**gestisco gli errori con la catch */
-     catch (err) {
-        // send to custom analytics server
-        throw err;
-      }
-    };
-  };
 
   
 

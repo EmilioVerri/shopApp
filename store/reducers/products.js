@@ -1,8 +1,12 @@
 //IMPORTO L'ARRAY DI PRODOTTI DENTRO dummy_data
 import PRODUCTS from '../../data/dummy-data';
+import {
+  DELETE_PRODUCT,
+  CREATE_PRODUCT,
+  UPDATE_PRODUCT,
+  SET_PRODUCTS
+} from '../actions/products';
 import Product from '../../models/product';
-
-import {CREATE_PRODUCT, DELETE_PRODUCT, UPDATE_PRODUCT,SET_PRODUCTS} from '../actions/products';
 
 /**
  * INITIAL STATE:
@@ -23,6 +27,15 @@ const initialState = {
   */
  export default (state = initialState, action) => {
     switch (action.type) {
+        case SET_PRODUCTS:
+            return {
+              /**
+               * nella return torniamo availableProducts uguale alla products definita dentro dispatch dell'azione
+               * per la userProducts invece ritorniamo anche qua la products filtrati per id ='u1'
+               */
+              availableProducts: action.products,
+              userProducts: action.products.filter(prod => prod.ownerId === 'u1')
+            };
 
 
 
@@ -34,19 +47,19 @@ const initialState = {
           * per availableProduct concateniamo newProduct e la stessa cosa la facciamo per userProduct
           */
          case CREATE_PRODUCT:
-      const newProduct = new Product(
-        action.productData.id,//riprendiamo id definito per Firebase
-        'u1',
-        action.productData.title,
-        action.productData.imageUrl,
-        action.productData.description,
-        action.productData.price
-      );
-      return {
-        ...state,
-        availableProducts: state.availableProducts.concat(newProduct),
-        userProducts: state.userProducts.concat(newProduct)
-      };
+            const newProduct = new Product(
+              action.productData.id,//riprendiamo id definito per Firebase
+              'u1',
+              action.productData.title,
+              action.productData.imageUrl,
+              action.productData.description,
+              action.productData.price
+            );
+            return {
+              ...state,
+              availableProducts: state.availableProducts.concat(newProduct),
+              userProducts: state.userProducts.concat(newProduct)
+            };
         /**UPDATE_PRODUCT:
          * creo una constante productIndex= allo stato userProducts e utilizziamo findIndex(), che è una funzione che viene eseguita
          * su ogni elemento dell'array e che deve restituire true in modo da avere un indice e li cercherò gli ID uguali al mio pid
@@ -104,27 +117,16 @@ const initialState = {
           * devo gestire la delete products anche dentro al carrello reducers
           */
          case DELETE_PRODUCT:
-      return {
-        ...state,
-        userProducts: state.userProducts.filter(
-          product => product.id !== action.pid
-        ),
-        availableProducts: state.availableProducts.filter(
-          product => product.id !== action.pid
-        )
+            return {
+              ...state,
+              userProducts: state.userProducts.filter(
+                product => product.id !== action.pid
+              ),
+              availableProducts: state.availableProducts.filter(
+                product => product.id !== action.pid
+              )
+            };
+        }
+        return state;
       };
-
-      case SET_PRODUCTS:
-
-          return{
-              /**
-               * nella return torniamo availableProducts uguale alla products definita dentro dispatch dell'azione
-               * per la userProducts invece ritorniamo anche qua la products filtrati per id ='u1'
-               */
-              availableProducts:action.products,
-              userProducts:action.products.filter(prod=>prod.id==='u1')
-          }
-
-  }
-  return state;
-};
+      

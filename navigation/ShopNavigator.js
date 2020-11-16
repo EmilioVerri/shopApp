@@ -32,54 +32,62 @@ const defaultNavigationOptions={
 }
 
 
-const ProductsNavigator=createStackNavigator({
-    ProductsOverview:ProductsOverviewScreen,
-    ProductDetail:ProductDetailScreen,
-    Cart:CartScreen
-},
+const ProductsNavigator = createStackNavigator(
     {
-        navigationOptions:{
-            drawerIcon:drawerConfig=><Ionicons 
-            name={Platform.OS==='android'?'md-cart':'ios-cart'}
+      ProductsOverview: ProductsOverviewScreen,
+      ProductDetail: ProductDetailScreen,
+      Cart: CartScreen
+    },
+    {
+      navigationOptions: {
+        drawerIcon: drawerConfig => (
+          <Ionicons
+            name={Platform.OS === 'android' ? 'md-cart' : 'ios-cart'}
             size={23}
             color={drawerConfig.tintColor}
-            />
-        },
+          />
+        )
+      },
         defaultNavigationOptions:defaultNavigationOptions,
     }
+    );
 
-
-);
 
 //creo un nuovo stackNavigator
-const OrdersNavigator=createStackNavigator({
-    Orders:OrdersScreen
-},
-{
-    navigationOptions:{
-        drawerIcon:drawerConfig=><Ionicons 
-        name={Platform.OS==='android'?'md-list':'ios-list'}
-        size={23}
-        color={drawerConfig.tintColor}
+const OrdersNavigator = createStackNavigator(
+  {
+    Orders: OrdersScreen
+  },
+  {
+    navigationOptions: {
+      drawerIcon: drawerConfig => (
+        <Ionicons
+          name={Platform.OS === 'android' ? 'md-list' : 'ios-list'}
+          size={23}
+          color={drawerConfig.tintColor}
         />
+      )
     },
     defaultNavigationOptions:defaultNavigationOptions,
 }
 );
 
 //creo un nuovo stackNavigator
-const AdminNavigator=createStackNavigator({
-    UserProducts:UserProductsScreen,
-    EditProduct:EditProductScreen
-},
-{
-    navigationOptions:{
-        drawerIcon:drawerConfig=><Ionicons 
-        name={Platform.OS==='android'?'md-create':'ios-create'}
-        size={23}
-        color={drawerConfig.tintColor}
-        />
+const AdminNavigator = createStackNavigator(
+    {
+      UserProducts: UserProductsScreen,
+      EditProduct: EditProductScreen
     },
+    {
+      navigationOptions: {
+        drawerIcon: drawerConfig => (
+          <Ionicons
+            name={Platform.OS === 'android' ? 'md-create' : 'ios-create'}
+            size={23}
+            color={drawerConfig.tintColor}
+          />
+        )
+      },
     defaultNavigationOptions:defaultNavigationOptions,
 }
 );
@@ -88,15 +96,17 @@ const AdminNavigator=createStackNavigator({
  * dentro a questo shopNavigator che sarà un menù unirò i due stackNavigator qua sopra,
  * si utilizza contentOptions per il DrawerNavigator per gli stili
  */
-const ShopNavigator=createDrawerNavigator({
-    Products:ProductsNavigator,
-    Orders:OrdersNavigator,
-    Admin:AdminNavigator
-},
-{
-    contentOptions:{
+const ShopNavigator = createDrawerNavigator(
+    {
+      Products: ProductsNavigator,
+      Orders: OrdersNavigator,
+      Admin: AdminNavigator
+    },
+    {
+      contentOptions: {
         activeTintColor:Colors.secondo
     }
-});
+}
+);
 
 export default createAppContainer(ShopNavigator);
