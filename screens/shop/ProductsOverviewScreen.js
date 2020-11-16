@@ -49,6 +49,7 @@ const [error, setError] = useState();
      * facciamo setIsLoading(falsa)
      */
 
+     
 
     const loadProducts = useCallback(async () => {
         setError(null);
@@ -60,6 +61,24 @@ const [error, setError] = useState();
         }
         setIsLoading(false);
       }, [dispatch, setIsLoading, setError]);
+      
+
+      /**imposto un ascoltatore di eventi di navigazione:
+       * utilizzo la useEffect per impostarlo
+       * utilizziamo la addListener come ascoltatore di eventi di navigazione senò si spacca e gli do un nome che esegue quell'elemento
+       * all'interno gli passo un secondo elemento che è il richiamo della constante definita prima loadProducts
+       * ritorna questa effects(è l'unica volta che una effects ritorna qualcosa), ritorno una funzione
+       * archiviamo quello che abbiamo definito sopra dentro ad una constante willFocusSub e la richiamiamo dentro alla return e gli passo anche una remove
+       * come direttive gli passo:
+       * loadProducts
+       * 
+      */
+     useEffect(()=>{
+        const willFocusSub=props.navigation.addListener('willFocus',loadProducts);
+        return ()=>{
+            willFocusSub.remove();
+        }
+        },[loadProducts]);
 
 
      /**per gestire gli errori faccio una try e una catch qua dentro */
