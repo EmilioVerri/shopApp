@@ -1,5 +1,5 @@
-import React from 'react';
-import { FlatList, Text, View, StyleSheet, Button } from 'react-native';
+import React,{useState} from 'react';
+import { FlatList, Text, View, StyleSheet, Button,ActivityIndicator} from 'react-native';
 
 import Colors from '../../constants/Colors';
 //importo useSelector
@@ -13,6 +13,8 @@ import * as ordersActions from '../../store/actions/order';
 import Card from '../../components/UI/Card';
 
 const CartScreen = props => {
+
+    const [isLoading,setIsLoading]=useState(false);
     /**CART SCREEN:
      * definisco una constante dispatch che serve per inviare azione e la metto uguale a useDispatch()
      * 
@@ -61,7 +63,18 @@ const CartScreen = props => {
  * passo alla funzione addOrder(cartItems,cartTotalAmount)
  * 
  * Dove ho scritto Math.round(...*100)/100 serve per evitare che durante i calcoli js si perda e vada a mettermi un errore con il segno meno
+ * 
+ * sposto il valore che prima avevo dentro la onPress nella constante sendOrderHandler
  */
+
+
+ const sendOrderHandler=async() => {
+     setIsLoading(true);
+     await dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+     setIsLoading(false);
+  }
+
+
 return (
     <View style={styles.screen}>
       <Card style={styles.summary}>
@@ -71,14 +84,18 @@ return (
             ${Math.round(cartTotalAmount.toFixed(2) * 100) / 100}
           </Text>
         </Text>
+        {isLoading ? <ActivityIndicator size='large' color={Colors.secondo}/>: 
         <Button
           color={Colors.accent}
           title="Order Now"
           disabled={cartItems.length === 0}
-          onPress={() => {
-            dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
-          }}
+          onPress={sendOrderHandler
+        /*() => {
+                dispatch(ordersActions.addOrder(cartItems, cartTotalAmount));
+              }*/}
+            
         />
+    }
       </Card>
             {/**FLATLIST:
              * passiamo come data la constante definita sopra cartItems
@@ -131,6 +148,11 @@ CartScreen.navigationOptions = {
     },
     amount: {
       color: Colors.primary
+    },
+    centered:{
+        alignItems:'center',
+        justifyContent:'center',
+        flexDirection:'row'
     }
   });
   
