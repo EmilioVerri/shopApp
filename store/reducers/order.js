@@ -19,13 +19,17 @@ const initialState = {
          * nella return copio lo stato che c'era già, prendo la variabile definita nell'initialState orders
          * e gli attribuisco con concat() che è una funzione javascript che aggiunge un nuovo elemento all'array e restituisce un nuovo array
          * e dentro concat, concateno la constante  newOrder
+         * 
+         * adesso l'id non sarà più la data ma sarà un vero e proprio id preso dall'aztions e anche la data la riceviamo dalle actions
          */
         case ADD_ORDER:
             const newOrder = new Order(
-              new Date().toString(),
+              //new Date().toString(),
+              action.orderData.id,
               action.orderData.items,
               action.orderData.amount,
-              new Date()
+              //new Date()
+              action.orderData.date
             );
             return {
               ...state,
