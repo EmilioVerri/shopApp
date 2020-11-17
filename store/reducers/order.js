@@ -1,13 +1,13 @@
 
-import {ADD_ORDER} from '../actions/order';
+import { ADD_ORDER,SET_ORDERS} from '../actions/order';
 import Order from '../../models/order';
 
 
 const initialState = {
     orders: []
-  };
+};
 
-  export default (state = initialState, action) => {
+export default (state = initialState, action) => {
     switch (action.type) {
         /**
          * CASE ADD_ORDER:
@@ -24,19 +24,28 @@ const initialState = {
          */
         case ADD_ORDER:
             const newOrder = new Order(
-              //new Date().toString(),
-              action.orderData.id,
-              action.orderData.items,
-              action.orderData.amount,
-              //new Date()
-              action.orderData.date
+                //new Date().toString(),
+                action.orderData.id,
+                action.orderData.items,
+                action.orderData.amount,
+                //new Date()
+                action.orderData.date
             );
             return {
-              ...state,
-              orders: state.orders.concat(newOrder)
+                ...state,
+                orders: state.orders.concat(newOrder)
             };
-        }
-      
-        return state;
-      };
-      
+        /**
+         * SET_ORDERS:
+         * ritorna la variabile orders che è uguale orders contenuto dentro all'azione order
+         * così archivio tutte le mappature degli ordini
+         * quindi andiamo a gestirlo adesso dentro alla ORDERSSCREEN
+         */
+        case SET_ORDERS:
+            return{
+                orders:action.orders
+            }
+    }
+
+    return state;
+};
