@@ -24,6 +24,9 @@ const [isLoading, setIsLoading] = useState(false);
 //definisco nuovo state per gli errori e lo inizializzo undefined cioè vuoto
 const [error, setError] = useState();
 
+//definisco una useState per il refresh
+const [isRefreshing,setIsRefreshing]=useState(false);
+
 
     /**PRODUCTSOVERVIEWSCREEN:
      * creo constante products che chiama lo useSelector che riceve autometicamente lo stato,
@@ -52,13 +55,15 @@ const [error, setError] = useState();
 
     const loadProducts = useCallback(async () => {
         setError(null);
-        setIsLoading(true);
+        setIsRefreshing(true);//metto la setIsRefreshing
+        //setIsLoading(true); lo tolgo per sistemare l'errore dentro alla flatlist dell'aggiornamento scorrendo verso il basso al posto di metterlo qua faccio una then(sotto)
         try {
           await dispatch(productsActions.fetchProducts());
         } catch (err) {
           setError(err.message);
         }
-        setIsLoading(false);
+        setIsRefreshing(false);//metto la setIsRefreshing
+        //setIsLoading(false); lo tolgo per sistemare l'errore dentro alla flatlist dell'aggiornamento scorrendo verso il basso al posto di metterlo qua faccio una then(sotto)
       }, [dispatch, setIsLoading, setError]);
     
       
@@ -98,7 +103,10 @@ const [error, setError] = useState();
             }
             setIsLoading(false);
         }*/
-        loadProducts(); //richiamo la funzione sopra
+        setIsLoading(true);
+        loadProducts().then(()=>{
+            setIsLoading(false)
+        }); //richiamo la funzione sopra
     }, [dispatch, loadProducts]);
 
     const selectItemHandler = (id, title) => {
@@ -175,8 +183,15 @@ if (!isLoading && products.length === 0) {
          * NON CI SARA PIU LA onAddToCart , la dispatch la inserirò direttamente dentro al button add to cart
          * 
          * inserisco i 2 button che erano dentro alla Productitem e gestisco già qua la logica
+         * 
+         * per fare aggiornamento tirando verso il basso:
+         * utilizzo una onRefresh così quando l'utente tira verso il basso farà il refresh e riaggiornerà la funzione loadProducts
+         * poi definiamo la refreshing che punta alla isRefreshing
+         * 
          */
         <FlatList
+        onRefresh={loadProducts}
+        refreshing={isRefreshing}
         data={products}
         keyExtractor={item => item.id}
         renderItem={itemData => (
