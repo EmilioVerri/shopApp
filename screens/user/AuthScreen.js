@@ -1,13 +1,81 @@
-import React from 'react';
+import React,{useEffect,useReducer,useCallback} from 'react';
 import { Text, View, StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Button } from 'react-native';
 import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
 import Colors from '../../constants/Colors';
 import { LinearGradient } from 'expo-linear-gradient';
+import {useDispatch} from 'react-redux';
+import * as authActions from '../../store/actions/auth';
 
 /**per iniziare dobbiamo andare alla schermata di navigazione e dire che questo è il primo componente di navigazione */
 
+
+/**definiamo un reducer che riceve gli stati iniziali e li va a modificare*/
+
+const FORM_INPUT_UPDATE = 'FORM_INPUT_UPDATE';
+
+const formReducer = (state, action) => {
+  if (action.type === FORM_INPUT_UPDATE) {
+    const updatedValues = {
+      ...state.inputValues,
+      [action.input]: action.value
+    };
+    const updatedValidities = {
+      ...state.inputValidities,
+      [action.input]: action.isValid
+    };
+    let updatedFormIsValid = true;
+    for (const key in updatedValidities) {
+      updatedFormIsValid = updatedFormIsValid && updatedValidities[key];
+    }
+    return {
+      formIsValid: updatedFormIsValid,
+      inputValidities: updatedValidities,
+      inputValues: updatedValues
+    };
+  }
+  return state;//se qualcosa va male restituisco l'ultimo stato salvato 
+};
+
+
+
+
 const AuthScreen = props => {
+
+    const dispatch=useDispatch();
+/**dentro al componente inizializzo la reducer che si trova fuori
+ * e come inputValues inizializzo email e password vuoti e come inputValidities li inizializzo a false e come formIsValid lo inizializzo a false
+*/
+    const [formState, dispatchFormState] = useReducer(formReducer, {
+        inputValues: {
+          email:'',
+          password:''
+        },
+        inputValidities: {
+          email:false,
+          password:false
+        },
+        formIsValid: false
+      });
+
+    const signumHandler=()=>{
+        dispatch(authActions.signUp(formState.inputValues.email,formState.inputValues.password));
+    }
+
+    const inputChangeHandler=useCallback(
+        (inputIdentifier, inputValue, inputValidity) => {
+        dispatchFormState({
+            type: FORM_INPUT_UPDATE,
+            value: inputValue,
+            isValid: inputValidity,
+            input: inputIdentifier
+          });
+        },[dispatchFormState]
+    )
+
+
+
+    
 
     return (
         <KeyboardAvoidingView
@@ -24,8 +92,8 @@ const AuthScreen = props => {
                             required
                             email
                             autoCapitalize="none"
-                            errorMessage="Please enter a valid Email Address!"
-                            onInputChange={() => { }}
+                            errorText="Please enter a valid Email Address!"
+                            onInputChange={inputChangeHandler}
                             initialValue=""
                         />
 
@@ -37,15 +105,15 @@ const AuthScreen = props => {
                             required
                             minLength={5}
                             autoCapitalize="none"
-                            errorMessage="Please enter a valid Password!"
-                            onInputChange={() => { }}
+                            errorText="Please enter a valid Password!"
+                            onInputChange={inputChangeHandler}
                             initialValue=""
                         />
                         <View style={styles.buttonContainer}>
                             <Button
                                 title="Login"
                                 color={Colors.primary}
-                                onPress={() => { }} />
+                                onPress={signumHandler} />
                         </View>
                         <View style={styles.buttonContainer}>
                             <Button
