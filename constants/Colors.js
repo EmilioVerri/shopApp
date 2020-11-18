@@ -7,5 +7,6 @@ export default{
     sesto:'#FFC107',
     settimo:'blue',
     ottavo:'green',
-    nono:'red'
+    nono:'red',
+    primary:'lightgreen'
 }

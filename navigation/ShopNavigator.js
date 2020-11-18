@@ -2,13 +2,16 @@
 import {createAppContainer} from 'react-navigation';
 import {createDrawerNavigator} from "react-navigation-drawer";
 import {createStackNavigator} from 'react-navigation-stack';
+import {createSwitchNavigator} from 'react-navigation';//serve per non tornare in dietro alla schermata di login una volta superata
 import React from 'react';
+
 
 import ProductsOverviewScreen from '../screens/shop/ProductsOverviewScreen';
 import ProductDetailScreen from '../screens/shop/ProductDetailScreen';
 import OrdersScreen from '../screens/shop/OrdersScreen';
 import UserProductsScreen from '../screens/user/UserProductsScreen';
 import EditProductScreen from '../screens/user/EditProductScreen';
+import AuthScreen from '../screens/user/AuthScreen';
 import Colors  from '../constants/Colors';
 import {Platform} from 'react-native';
 
@@ -109,4 +112,21 @@ const ShopNavigator = createDrawerNavigator(
 }
 );
 
-export default createAppContainer(ShopNavigator);
+
+
+const AuthNavigator=createStackNavigator({
+    Auth:AuthScreen
+},
+{
+defaultNavigationOptions:defaultNavigationOptions,
+}
+)
+
+
+const MainNavigator=createSwitchNavigator(
+    {
+        Auth: AuthNavigator,
+        Shop:ShopNavigator
+    }
+)
+export default createAppContainer(MainNavigator);
