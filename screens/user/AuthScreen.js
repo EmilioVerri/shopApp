@@ -1,5 +1,5 @@
 import React,{useEffect,useReducer,useCallback,useState} from 'react';
-import { Text, View, StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Button } from 'react-native';
+import { Text, View, StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Button,ActivityIndicator,Alert} from 'react-native';
 import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
 import Colors from '../../constants/Colors';
@@ -41,6 +41,8 @@ const formReducer = (state, action) => {
 
 
 const AuthScreen = props => {
+    const [isLoading,setIsLoading]=useState(false);
+    const [error,setError]=useState();
 
     /**Definiamo una useState che ci permette di capire se siamo in login mode o in signUp mode 
      * mettiamo lo useState a false per dirgli che siamo in modalità login
@@ -64,6 +66,15 @@ const AuthScreen = props => {
         formIsValid: false
       });
 
+      /**definisco una useEffects per la gestione dell'errore */
+
+      useEffect(()=>{
+          if(error){
+              Alert.alert('An error Occured!',error,[{text:'Okay'}]);
+          }
+      },[error]);
+     
+
       /**definiamo una variabile action undefined
        * se isSignUp è true:
        * gli dico che la variabile action è uguale alla funzione signUp con quegli elementi passati dentro l'azione auth
@@ -73,7 +84,7 @@ const AuthScreen = props => {
        * all'esterno dell'if passo la variabile action alla dispatch così faccio sempre dispatch
        * 
       */
-    const authHandler=()=>{
+    const authHandler=async()=>{
         let action;
         if(isSignUp){
             action=
@@ -85,7 +96,17 @@ const AuthScreen = props => {
                 formState.inputValues.email,
                 formState.inputValues.password);
         }
-        dispatch(action);
+        setError(null);
+        setIsLoading(true);
+
+        try{
+        await dispatch(action);
+    }catch(err){
+        setError(err.message);
+    }
+
+    setIsLoading(false);
+        
         
     }
 
@@ -101,8 +122,6 @@ const AuthScreen = props => {
     )
 
 
-
-    
 
     return (
         <KeyboardAvoidingView
@@ -137,10 +156,12 @@ const AuthScreen = props => {
                             initialValue=""
                         />
                         <View style={styles.buttonContainer}>
-                            <Button
+                            {isLoading?(
+                            <ActivityIndicator size='large' color={Colors.primary}/>):
+                            (<Button
                                 title={isSignUp?"SignUp":"Login"}
                                 color={Colors.primary}
-                                onPress={authHandler} />
+                                onPress={authHandler} />)}
                         </View>
                         <View style={styles.buttonContainer}>
                             {/**utilizzo i bac tick con switch in modo da ignettare un valore dinamico*/}

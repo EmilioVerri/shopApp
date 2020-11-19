@@ -32,8 +32,19 @@ export const signUp = (email, password) => {
                     })
                 }
             )
-            if (!response) {
-                throw new Error('Something went wrong!');
+            if (!response.ok) {//se la risposta non è un 200
+                const errorResData=await response.json();//estraggo l'errore in una constante ottenuto con una risposta JSON //ritornerà un 400
+                /**definisco una constante errorId uguale alla constante definita sopra e .error ci da l'accesso al valore dell'errore restituito da FireBase
+                 * esempio: EMAIL_EXISTS  ECC... .message prende il messaggio e poi gestiamo la constante nell'if sotto
+                 * ilmessaggio di errore verrà passato alla AuthScreen
+                 */
+                const errorId=errorResData.error.message;
+                let message ="Something went wrong!";
+
+                if(errorId==='EMAIL_EXISTS'){
+                    message='This email exists already!';
+                }
+                throw new Error(message);
             }
 
             const resData = await response.json(); //aspetta che ci sia una risposta json e lo convertirà in formato JavaScript
@@ -86,8 +97,22 @@ export const login = (email, password) => {
                     })
                 }
             )
-            if (!response) {
-                throw new Error('Something went wrong!');
+            if (!response.ok) {//se la risposta non è un 200
+                const errorResData=await response.json();//estraggo l'errore in una constante ottenuto con una risposta JSON //ritornerà un 400
+                /**definisco una constante errorId uguale alla constante definita sopra e .error ci da l'accesso al valore dell'errore restituito da FireBase
+                 * esempio: EMAIL_NOT_FOUND, INVALID_PASSWORD ECC... .message prende il messaggio e poi gestiamo la constante nell'if sotto
+                 * ilmessaggio di errore verrà passato alla AuthScreen
+                 */
+                const errorId=errorResData.error.message;
+                let message ="Something went wrong!";
+
+                if(errorId==='EMAIL_NOT_FOUND'){
+                    message='This email coult not be found!';
+                }
+                else if(errorId==='INVALID_PASSWORD'){
+                    message='This password is not valid!';
+                }
+                throw new Error(message);
             }
 
             const resData = await response.json(); //aspetta che ci sia una risposta json e lo convertirà in formato JavaScript
