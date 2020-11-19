@@ -1,4 +1,4 @@
-import React,{useEffect,useReducer,useCallback} from 'react';
+import React,{useEffect,useReducer,useCallback,useState} from 'react';
 import { Text, View, StyleSheet, Platform, ScrollView, KeyboardAvoidingView, Button } from 'react-native';
 import Input from '../../components/UI/Input';
 import Card from '../../components/UI/Card';
@@ -42,6 +42,12 @@ const formReducer = (state, action) => {
 
 const AuthScreen = props => {
 
+    /**Definiamo una useState che ci permette di capire se siamo in login mode o in signUp mode 
+     * mettiamo lo useState a false per dirgli che siamo in modalità login
+    */
+
+    const[isSignUp,setIsSignUp]=useState(false);
+
     const dispatch=useDispatch();
 /**dentro al componente inizializzo la reducer che si trova fuori
  * e come inputValues inizializzo email e password vuoti e come inputValidities li inizializzo a false e come formIsValid lo inizializzo a false
@@ -58,8 +64,29 @@ const AuthScreen = props => {
         formIsValid: false
       });
 
-    const signumHandler=()=>{
-        dispatch(authActions.signUp(formState.inputValues.email,formState.inputValues.password));
+      /**definiamo una variabile action undefined
+       * se isSignUp è true:
+       * gli dico che la variabile action è uguale alla funzione signUp con quegli elementi passati dentro l'azione auth
+       * se isSignUp è false:
+       * gli dico che la variabile action è uguale alla funzione login con quegli elementi passati dentro l'azione auth
+       * 
+       * all'esterno dell'if passo la variabile action alla dispatch così faccio sempre dispatch
+       * 
+      */
+    const authHandler=()=>{
+        let action;
+        if(isSignUp){
+            action=
+            authActions.signUp(
+                formState.inputValues.email,
+                formState.inputValues.password);
+        }else{
+            action=authActions.login(
+                formState.inputValues.email,
+                formState.inputValues.password);
+        }
+        dispatch(action);
+        
     }
 
     const inputChangeHandler=useCallback(
@@ -111,15 +138,18 @@ const AuthScreen = props => {
                         />
                         <View style={styles.buttonContainer}>
                             <Button
-                                title="Login"
+                                title={isSignUp?"SignUp":"Login"}
                                 color={Colors.primary}
-                                onPress={signumHandler} />
+                                onPress={authHandler} />
                         </View>
                         <View style={styles.buttonContainer}>
+                            {/**utilizzo i bac tick con switch in modo da ignettare un valore dinamico*/}
                             <Button
-                                title="Switch to Sign Up"
+                                title={`Switch to ${isSignUp?'Login':'SignUp'}`}
                                 color={Colors.sesto}
-                                onPress={() => { }} />
+                                onPress={()=>{
+                                    setIsSignUp(prevState=>!prevState);//ritorno il valore contrario al tocco dello stato precendete, se il prevState era true diventa false
+                                }} />
                         </View>
                     </ScrollView>
                 </Card>
@@ -130,8 +160,8 @@ const AuthScreen = props => {
 }
 
 
-AuthScreen.navigationOptions = {
-    headerTitle: 'Login'
+AuthScreen.navigationOptions ={
+    headerTitle: 'Autenticazione'
 }
 
 
