@@ -50,9 +50,15 @@ export const signUp = (email, password) => {
             const resData = await response.json(); //aspetta che ci sia una risposta json e lo convertirà in formato JavaScript
             console.log(resData);
 
-
+            /**
+             * nella dispatch definisco i valori che verranno mandati alla reducers:
+             * il type, il token uguale a resData.idToken guardo la sezione Payload di risposta di https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
+             * e la stessa cosa per id, ci sono .idToken e .localId
+             */
             dispatch({
                 type: SIGNUP,
+                token:resData.idToken,
+                userId:resData.localId
             })
         }
     )
@@ -118,9 +124,15 @@ export const login = (email, password) => {
             const resData = await response.json(); //aspetta che ci sia una risposta json e lo convertirà in formato JavaScript
             console.log(resData);
 
-
+            /**
+             * nella dispatch definisco i valori che verranno mandati alla reducers:
+             * il type, il token uguale a resData.idToken guardo la sezione Payload di risposta di https://firebase.google.com/docs/reference/rest/auth#section-sign-in-email-password
+             * e la stessa cosa per id, ci sono .idToken e .localId
+             */
             dispatch({
                 type: LOGIN,
+                token:resData.idToken,
+                userId:resData.localId
             })
         }
     )

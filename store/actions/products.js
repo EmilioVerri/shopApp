@@ -54,10 +54,16 @@ export const DELETE_PRODUCT = 'DELETE_PRODUCT';
  * gestisco anche qua la delete per id utilizzando back-tips Alt+96
  * per l'eliminazione il metodo sarà DELETE e non avremo bisogno di una header e di una body
  */
+ /**aggiungiamo il token all' url si fa aggiungengo : auth=${}  e dentro mettiamo la constante token definita sotto
+ * definiamo una funzione getState che ci da accesso allo stato Redux quindi adesso possiamo accedere allo stato
+ * corrente del nostro negozio Redux e al token
+ * salviamo dentro la constante token il token preso da getState che va a prenderlo dentro alla reducer auth e prende la variabile token
+*/
 export const deleteProduct = productId => {
-    return async dispatch => {
+    return async (dispatch,getState) => {
+        const token=getState().auth.token;
       const response = await fetch(
-        `https://rn-shopapp-fb5e0.firebaseio.com/products/${productId}.json`,
+        `https://rn-shopapp-fb5e0.firebaseio.com/products/${productId}.json?auth=${token}`,
         {
           method: 'DELETE'
         }
@@ -95,11 +101,18 @@ export const CREATE_PRODUCT = 'CREATE_PRODUCT';
  await response.json(); ci ritornerà i dati di fireBase quando aggiungiamo un prodotto
 https://rn-shopapp-fb5e0.firebaseio.com/products.json
  */
+
+ /**aggiungiamo il token all' url si fa aggiungengo : auth=${}  e dentro mettiamo la constante token definita sotto
+ * definiamo una funzione getState che ci da accesso allo stato Redux quindi adesso possiamo accedere allo stato
+ * corrente del nostro negozio Redux e al token
+ * salviamo dentro la constante token il token preso da getState che va a prenderlo dentro alla reducer auth e prende la variabile token
+*/
 export const createProduct = (title, description, imageUrl, price) => {
-    return async dispatch => {
+    return async (dispatch,getState) => {
+        const token=getState().auth.token;
       // any async code you want!
       const response = await fetch(
-        'https://rn-shopapp-fb5e0.firebaseio.com/products.json',
+          `https://rn-shopapp-fb5e0.firebaseio.com/products.json?auth=${token}`,
         {
           method: 'POST',
           headers: {
@@ -148,11 +161,17 @@ export const UPDATE_PRODUCT = 'UPDATE_PRODUCT';
  * per fare i back-tips Alt+96 per aggiornare gli passiamo la PUT O LA PATCH
  */
 
-
+/**aggiungiamo il token all' url si fa aggiungengo : auth=${}  e dentro mettiamo la constante token definita sotto
+ * definiamo una funzione getState che ci da accesso allo stato Redux quindi adesso possiamo accedere allo stato
+ * corrente del nostro negozio Redux e al token
+ * salviamo dentro la constante token il token preso da getState che va a prenderlo dentro alla reducer auth e prende la variabile token
+*/
 export const updateProduct = (id, title, description, imageUrl) => {
-    return async dispatch => {
+    return async (dispatch,getState) => {
+        const token=getState().auth.token;
       const response = await fetch(
-        `https://rn-shopapp-fb5e0.firebaseio.com/products/${id}.json`,
+          
+        `https://rn-shopapp-fb5e0.firebaseio.com/products/${id}.json?auth=${token}`,
         {
             method: 'PATCH',
             headers: {

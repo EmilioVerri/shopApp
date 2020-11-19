@@ -18,11 +18,17 @@ export const ADD_ORDER = 'ADD_ORDER';
  * 
  * adesso nel reducers posso cambiarlo perchè l'id non sarà più la data ma lo otterrò dalla resData
  */
+ /**aggiungiamo il token all' url si fa aggiungengo : auth=${}  e dentro mettiamo la constante token definita sotto
+ * definiamo una funzione getState che ci da accesso allo stato Redux quindi adesso possiamo accedere allo stato
+ * corrente del nostro negozio Redux e al token
+ * salviamo dentro la constante token il token preso da getState che va a prenderlo dentro alla reducer auth e prende la variabile token
+*/
 export const addOrder = (cartItems, totalAmount) => {
-    return async dispatch => {
+    return async (dispatch,getState) => {
+        const token=getState().auth.token;
         const date = new Date();
         const response = await fetch(
-            'https://rn-shopapp-fb5e0.firebaseio.com/order/u1.json',
+            `https://rn-shopapp-fb5e0.firebaseio.com/order/u1.json?auth=${token}`,
             {
                 method: 'POST',
                 headers: {

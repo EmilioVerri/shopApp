@@ -20,11 +20,13 @@ import cartReducer from './store/reducers/cart';
 
 import ordersReducer from './store/reducers/order';
 
+import authReducer from './store/reducers/auth';
 
 //import per mandare richieste http:
 import {applyMiddleware} from 'redux';
 //importo ReduxThunk
 import ReduxThunk from 'redux-thunk';
+import auth from './store/reducers/auth';
 
 
 
@@ -39,7 +41,8 @@ import ReduxThunk from 'redux-thunk';
 const rootReducer = combineReducers({
     products: productsReducer,
     cart: cartReducer,
-    orders: ordersReducer
+    orders: ordersReducer,
+    auth:authReducer
   });
 /**
  * creiamo la constante store che crea lo store e gli passiamo la constante rootReducer come argomento
