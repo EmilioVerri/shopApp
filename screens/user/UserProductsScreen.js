@@ -47,6 +47,16 @@ const UserProductsScreen=props=>{
           }
         ]);
       };
+/**
+ * se non ci sono prodotti dentro allora stampa questo
+ */
+if (userProducts.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>No products found, maybe start creating some?</Text>
+      </View>
+    );
+  }
 
     /**RETURN:
      * nella return definisco una FLATLIST:

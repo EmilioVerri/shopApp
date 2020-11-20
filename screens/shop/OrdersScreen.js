@@ -41,6 +41,16 @@ const OrdersScreen=props=>{
         )
     }
 
+    /**
+ * se non ci sono ordini dentro allora stampa questo:
+ */
+  if (orders.length === 0) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text>No order found, maybe start ordering some products?</Text>
+      </View>
+    );
+  }
 
     /**RETURN:
      * ritorniamo una FlatList, che come data ritorna la variabile sopra orders

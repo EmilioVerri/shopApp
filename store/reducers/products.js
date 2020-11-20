@@ -17,9 +17,14 @@ import Product from '../../models/product';
  */
 
 const initialState = {
-    availableProducts: PRODUCTS,
+    /**definiamo che non iniziamo con i nostri prodotti fittizzi ma con un array vuoto sia per availableProducts che per userProducts
+    PRIMA ERA COSì:
+    availableProducts:PRODUCTS,
     userProducts: PRODUCTS.filter(prod => prod.ownerId === 'u1')
-  };
+    */
+   availableProducts: [],
+   userProducts: []
+ };
 
  /**
   * RIDUTTORE, che è una funzione in cui otteniamo lo stato che dovrebbe essere inizializzato con il nostro initialState
@@ -27,14 +32,20 @@ const initialState = {
   */
  export default (state = initialState, action) => {
     switch (action.type) {
+        /**
+         * nella setProducts adesso la userProducts non sarà più statica ma dinamica presa 
+         * dalla actions products la variabile userProducts e prenderà il filtro che lo contiene
+         */
         case SET_PRODUCTS:
             return {
               /**
                * nella return torniamo availableProducts uguale alla products definita dentro dispatch dell'azione
                * per la userProducts invece ritorniamo anche qua la products filtrati per id ='u1'
+               * non sarà più statico ma sarà dinamico e lo filtro per ownerId
                */
               availableProducts: action.products,
-              userProducts: action.products.filter(prod => prod.ownerId === 'u1')
+             // userProducts: action.products.filter(prod => prod.ownerId === 'u1')non sarà più così ma:
+             userProducts: action.userProducts
             };
 
 
@@ -48,8 +59,9 @@ const initialState = {
           */
          case CREATE_PRODUCT:
             const newProduct = new Product(
-              action.productData.id,//riprendiamo id definito per Firebase
-              'u1',
+                action.productData.id,//riprendiamo id definito per Firebase
+              //'u1', non sarà più statico ma sarà dinamico preso dalla actions products
+              action.productData.ownerId,
               action.productData.title,
               action.productData.imageUrl,
               action.productData.description,
@@ -78,26 +90,25 @@ const initialState = {
          * e faccio la stessa cosa di userProducts con availableProducts
          */
 
-case UPDATE_PRODUCT:
-      const productIndex = state.userProducts.findIndex(
-        prod => prod.id === action.pid
-      );
-      const updatedProduct = new Product(
-        action.pid,
-        state.userProducts[productIndex].ownerId,
-        action.productData.title,
-        action.productData.imageUrl,
-        action.productData.description,
-        state.userProducts[productIndex].price
-      );
-      
-      const updatedUserProducts = [...state.userProducts];
-      updatedUserProducts[productIndex] = updatedProduct;
-      const availableProductIndex = state.availableProducts.findIndex(
-        prod => prod.id === action.pid
-      );
-      const updatedAvailableProducts = [...state.availableProducts];
-      updatedAvailableProducts[availableProductIndex] = updatedProduct;
+        case UPDATE_PRODUCT:
+            const productIndex = state.userProducts.findIndex(
+              prod => prod.id === action.pid
+            );
+            const updatedProduct = new Product(
+              action.pid,
+              state.userProducts[productIndex].ownerId,
+              action.productData.title,
+              action.productData.imageUrl,
+              action.productData.description,
+              state.userProducts[productIndex].price
+            );
+            const updatedUserProducts = [...state.userProducts];
+            updatedUserProducts[productIndex] = updatedProduct;
+            const availableProductIndex = state.availableProducts.findIndex(
+              prod => prod.id === action.pid
+            );
+            const updatedAvailableProducts = [...state.availableProducts];
+            updatedAvailableProducts[availableProductIndex] = updatedProduct;
                 /**
                  * RETURN:
                  * lo stato iniziale,
@@ -119,16 +130,16 @@ case UPDATE_PRODUCT:
           * devo gestire la delete products anche dentro al carrello reducers
           */
          case DELETE_PRODUCT:
-            return {
-              ...state,
-              userProducts: state.userProducts.filter(
-                product => product.id !== action.pid
-              ),
-              availableProducts: state.availableProducts.filter(
-                product => product.id !== action.pid
-              )
-            };
-        }
-        return state;
+      return {
+        ...state,
+        userProducts: state.userProducts.filter(
+          product => product.id !== action.pid
+        ),
+        availableProducts: state.availableProducts.filter(
+          product => product.id !== action.pid
+        )
       };
+  }
+  return state;
+};
       
