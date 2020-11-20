@@ -202,3 +202,17 @@ export const AUTHENTICATE = 'AUTHENTICATE';
 export const authenticate = (userId, token) => {
   return { type: AUTHENTICATE, userId: userId, token: token };
 };
+
+
+
+
+//aggiungo identificatore di azioni:
+export const LOGOUT='LOGOUT';
+
+
+/**aggiungo un nuovo creatore di azioni per la logout
+ * 
+ */
+ export const logout=()=>{
+     return{type:LOGOUT}
+ }
