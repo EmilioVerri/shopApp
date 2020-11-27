@@ -15,7 +15,7 @@ export const fetchOrders = () => {
       const userId = getState().auth.userId;
       try {
         const response = await fetch(
-                `https://rn-shopapp-fb5e0.firebaseio.com/orders/${userId}.json`
+                `https://rn-shopapp-fb5e0.firebaseio.com/order/${userId}.json`
             );
             /**se ritorna un 200 e quindi si è connessi con il link sopra ritorna un 200=ok
              * se response.ok è falso allora restituisci la frase di errore e lo gestiamo dentro ProductsOverviewScreen

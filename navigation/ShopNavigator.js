@@ -120,27 +120,26 @@ const ShopNavigator = createDrawerNavigator(
      * <DrawerItems {...props}/> devo sempre impostarlo così
      * 
      */
-        contentComponent:props=>{
-            const dispatch=useDispatch();
-            return(
-            <View style={{flex:1,paddingTop:20}}>
-                <SafeAreaView forceInset={{top:'always',horizontal:'never'}}>
-                    <DrawerItems {...props} />
-                    <Button 
-                    title="Logout" 
-                    color={Colors.primary}
-                    onPress={()=>{
-                        dispatch(authActions.logout());
-                        props.navigation.navigate('Auth');
-                    }} />
-                </SafeAreaView>
-            </View>
-            )
-        }
-    
-}
-);
-
+    contentComponent: props => {
+        const dispatch = useDispatch();
+        return (
+          <View style={{ flex: 1, paddingTop: 20 }}>
+            <SafeAreaView forceInset={{ top: 'always', horizontal: 'never' }}>
+              <DrawerItems {...props} />
+              <Button
+                title="Logout"
+                color={Colors.primary}
+                onPress={() => {
+                  dispatch(authActions.logout());
+                  props.navigation.navigate('Auth');
+                }}
+              />
+            </SafeAreaView>
+          </View>
+        );
+      }
+    }
+  );
 
 
 const AuthNavigator=createStackNavigator({

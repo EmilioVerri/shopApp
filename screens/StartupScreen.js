@@ -43,10 +43,19 @@ const StartupScreen = props => {
           return;
         }
 
+        /**calcoliamo qua il tempo di scadenza prendendo fondamentalmente la data di scadenza
+         * definisco una constante expirationTime uguale alla expirationDate e utilizzo funzione getTime()
+         * e sottraggo il timestamp attuale
+         * questa constante la validiamo nell'auth.js
+         */
+
+
+        const expirationTime = expirationDate.getTime() - new Date().getTime();
+
 
         props.navigation.navigate('Shop');
             // creo nuova azione dentro actions
-            dispatch(authActions.authenticate(userId, token));
+            dispatch(authActions.authenticate(userId, token, expirationTime));
         };
     
 
