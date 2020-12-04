@@ -31,7 +31,8 @@ const StartupScreen = props => {
        const tryLogin = async () => {
         const userData = await AsyncStorage.getItem('userData');
         if (!userData) {
-          props.navigation.navigate('Auth');
+          //props.navigation.navigate('Auth'); al posto di fare questo vado a chiarare l'azione setDidTryAL
+          dispatch(authActions.setDidTryAL());
           return;
         }
         const transformedData = JSON.parse(userData);
@@ -39,7 +40,8 @@ const StartupScreen = props => {
         const expirationDate = new Date(expiryDate);
   
         if (expirationDate <= new Date() || !token || !userId) {
-          props.navigation.navigate('Auth');
+          //props.navigation.navigate('Auth'); al posto di fare questo vado a chiarare l'azione setDidTryAL
+          dispatch(authActions.setDidTryAL());
           return;
         }
 
@@ -53,7 +55,7 @@ const StartupScreen = props => {
         const expirationTime = expirationDate.getTime() - new Date().getTime();
 
 
-        props.navigation.navigate('Shop');
+       // props.navigation.navigate('Shop');
             // creo nuova azione dentro actions
             dispatch(authActions.authenticate(userId, token, expirationTime));
         };

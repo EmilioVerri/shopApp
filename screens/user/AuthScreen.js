@@ -101,7 +101,7 @@ const AuthScreen = props => {
 
         try {
             await dispatch(action);
-            props.navigation.navigate("Shop");
+           // props.navigation.navigate("Shop");
         } catch (err) {
             setError(err.message);
             setIsLoading(false);//inserendola qua non avremo errori quando navigherà verso Shop
@@ -183,9 +183,10 @@ const AuthScreen = props => {
 }
 
 
-AuthScreen.navigationOptions = {
-    headerTitle: 'Autenticazione'
-}
+//AuthScreen.navigationOptions = {non sarà più così, esporto una constante
+export const screenOptions = {
+    headerTitle: 'Authenticazione'
+  };
 
 
 const styles = StyleSheet.create({

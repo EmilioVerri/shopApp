@@ -9,7 +9,8 @@ import {Provider} from 'react-redux';
 import productsReducer from './store/reducers/products';
 
 //import ShopNavigator from './navigation/ShopNavigator'; al posto di questo importo il nuovo componente creato
-import NavigationContainer from './navigation/NavigationContainer';
+//aggiurno import
+import AppNavigator from './navigation/AppNavigator';
 
 //importo i componenti per i font
 import {AppLoading} from 'expo';
@@ -88,7 +89,7 @@ const fetchFonts = () => {
      */
     return (
         <Provider store={store}>
-          <NavigationContainer />
+          <AppNavigator />
         </Provider>
       );
     }

@@ -108,10 +108,11 @@ if (userProducts.length === 0) {
     
 
 
-    UserProductsScreen.navigationOptions = navData => {
+    //UserProductsScreen.navigationOptions = navData => { non sarà più così esporto una constante
+        export const screenOptions=navData=>{
         return {
           headerTitle: 'Your Products',
-          headerLeft: (
+          headerLeft:()=>(
             <HeaderButtons HeaderButtonComponent={HeaderButton}>
               <Item
                 title="Menu"
@@ -124,7 +125,7 @@ if (userProducts.length === 0) {
             ),
     
 /**in questo caso non gli passiamo niente alla schermata, perchè se voglio creare un nuovo prodotto non gli devo passare niente alla EditProductScreen */
-headerRight: (
+headerRight:()=>(
     <HeaderButtons HeaderButtonComponent={HeaderButton}>
       <Item
         title="Add"

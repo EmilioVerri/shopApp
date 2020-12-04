@@ -1,6 +1,12 @@
 import AsyncStorage from "@react-native-community/async-storage";
 
 
+export const SET_DID_TRY_AL = 'SET_DID_TRY_AL';
+
+export const setDidTryAL = () => {
+    return { type: SET_DID_TRY_AL };
+  };
+
 
 
 /**nuova azione authenticate,
@@ -280,5 +286,9 @@ const saveDataToStorage = (token, userId, expirationDate) => {
       })
     );
   };
+  
+
+
+
   
 

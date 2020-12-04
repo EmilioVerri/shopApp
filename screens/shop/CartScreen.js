@@ -127,7 +127,8 @@ return (
 };
 
 
-CartScreen.navigationOptions = {
+//CartScreen.navigationOptions = {non sarà più così ma sarà una constante da esportare
+export const screenOptions={
     headerTitle: 'Your Cart'
   };
   

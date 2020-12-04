@@ -14,7 +14,8 @@ const ProductDetailScreen=props=>{
      * nella selectedProduct facciamo uno use selector che richiama lo state.products definito nell'app.js .availableProducts che si trova dentro al reducers
      * facciamo una find così da poter prendere il singolo elemento con quell'id, e gli diciamo di prendere solo l'id del prodotto che viene passato
      */
-    const productId = props.navigation.getParam('productId');
+   // const productId = props.navigation.getParam('productId'); non vado più ad utilizzare la getParam
+   const productId = props.route.params.productId;
   const selectedProduct = useSelector(state =>
     state.products.availableProducts.find(prod => prod.id === productId)
   );
@@ -46,9 +47,12 @@ const ProductDetailScreen=props=>{
       );
     };
     
-    ProductDetailScreen.navigationOptions = navData => {
+
+    //ProductDetailScreen.navigationOptions = navData => { non sarà più così ma sarà una constante da esportare
+export const screenOptions=navData=>{
       return {
-        headerTitle: navData.navigation.getParam('productTitle')
+       // headerTitle: navData.navigation.getParam('productTitle') non utilizzo la getParam
+       headerTitle: navData.route.params.productTitle
       };
     };
     

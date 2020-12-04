@@ -79,13 +79,12 @@ const [isRefreshing,setIsRefreshing]=useState(false);
        * 
       */
      useEffect(() => {
-        const willFocusSub = props.navigation.addListener(
-          'willFocus',
+        const unsubscribe = props.navigation.addListener(
+          'focus',
           loadProducts
         );
-    
         return () => {
-            willFocusSub.remove();
+            unsubscribe();
           };
         }, [loadProducts]);
 
@@ -231,10 +230,12 @@ if (!isLoading && products.length === 0) {
   );
 };
 
-ProductsOverviewScreen.navigationOptions = navData => {
+//ProductsOverviewScreen.navigationOptions = navData => { non sarà più così ma sarà una constante da esportare
+export const screenOptions=navData=>{
     return {
       headerTitle: 'All Products',
-      headerLeft: (
+      //headerLeft diventa una funzione
+      headerLeft:(props)=> (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
           <Item
             title="Menu"
@@ -245,7 +246,8 @@ ProductsOverviewScreen.navigationOptions = navData => {
           />
         </HeaderButtons>
       ),
-      headerRight: (
+      //headerRight diventa una funzione
+      headerRight:()=> (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
           <Item
             title="Cart"

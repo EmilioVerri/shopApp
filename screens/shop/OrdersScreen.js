@@ -74,10 +74,11 @@ const OrdersScreen=props=>{
           );
         };
 
-        OrdersScreen.navigationOptions = navData => {
+        //OrdersScreen.navigationOptions = navData => {non sarà più così esporto una constante
+        export const screenOptions=navData=>{
             return {
               headerTitle: 'Your Orders',
-              headerLeft: (
+              headerLeft:()=> (
                 <HeaderButtons HeaderButtonComponent={HeaderButton}>
                   <Item
                     title="Menu"

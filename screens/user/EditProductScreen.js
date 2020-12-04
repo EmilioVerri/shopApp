@@ -93,8 +93,12 @@ const EditProductScreen = props => {
 */
 
 
-
+/**in react 5 non c'è più la getParam 
 const prodId = props.navigation.getParam('productId');
+ma c'è route: 
+params è solo una chiave chiamata così e poi prendiamo il productId*/
+/**se i dati sono veri  navData.route.params allora vogliamo accedere ai genitori senò metti null*/
+const prodId = props.route.params? props.route.params.productId:null;
   const editedProduct = useSelector(state =>
     state.products.userProducts.find(prod => prod.id === prodId)
   );
@@ -201,7 +205,25 @@ const prodId = props.navigation.getParam('productId');
       }, [dispatch, prodId, formState]);
     
       useEffect(() => {
-        props.navigation.setParams({ submit: submitHandler });
+          /**non ci sarà più la setParams 
+           * props.navigation.setParams({ submit: submitHandler });
+           * utilizzo setOptions, definisco un oggetto dentro setOptions
+           * METTO L'HEADERRIGHT DENTRO
+          */
+         props.navigation.setOptions({
+             //ora possiamo aggiornare le nostre opzioni in modo dinamico senza abusare dei genitori
+             headerRight:()=>(
+            <HeaderButtons HeaderButtonComponent={HeaderButton}>
+              <Item
+                title="Save"
+                iconName={
+                  Platform.OS === 'android' ? 'md-checkmark' : 'ios-checkmark'
+                }
+                onPress={submitHandler}//adesso faccio riferimento alla submitHandler
+              />
+            </HeaderButtons>
+          )});
+        
       }, [submitHandler]);
 
 
@@ -358,10 +380,15 @@ const prodId = props.navigation.getParam('productId');
 };
 
 
-EditProductScreen.navigationOptions = navData => {
+//EditProductScreen.navigationOptions = navData => {non sarà più così, esporto una constante
+        export const screenOptions=navData=>{
 
     /**definisco una constante che ha una getParam che riprende la submit come chiave presa dalla useEffects */
-    const submitFn = navData.navigation.getParam('submit');
+    //const submitFn = navData.navigation.getParam('submit');non sarà più così perchè non si usa la getParam nella 5
+        /**se i dati sono veri  navData.route.params allora vogliamo accedere ai genitori senò metti null*/
+   // const submitFn=navData.route.params?navData.route.params.submit:null;TOLGO QUESTO
+ /**definisco una constante routeParams se i dati sono veri  navData.route.params allora vogliamo accedere ai genitori senò metti un oggetto vuoto*/
+    const routeParams=navData.route.params?navData.route.params:{};
     /**definiamo una navigationOptions e per rendere il titolo dinamico definiamo una getParam 
      * se dalla schermata UserproductsScreen clicchiamo e passiamo productId alla EditProduct allora il titolo sarà EditProduct senò 
      * se non viene passato nulla il titolo sarà Add Product
@@ -369,10 +396,13 @@ EditProductScreen.navigationOptions = navData => {
      * dentro la onPress richiamo la funzione submitFn definita qua sopra
     */
    return {
-    headerTitle: navData.navigation.getParam('productId')
+    //headerTitle: navData.navigation.getParam('productId') non sarà più così perchè non si usa la getParam nella 5
+    //andiamo a richiamare la constante routeParams dove all'interno c'è la definizione
+    headerTitle: routeParams.productId
       ? 'Edit Product'
       : 'Add Product',
-    headerRight: (
+   /* LO VADO AD INSERIRE SOPRA NELLA SETOPTIONS
+   headerRight:()=>(
       <HeaderButtons HeaderButtonComponent={HeaderButton}>
         <Item
           title="Save"
@@ -382,7 +412,7 @@ EditProductScreen.navigationOptions = navData => {
           onPress={submitFn}
         />
       </HeaderButtons>
-    )
+    )*/
   };
 };
 
