@@ -62,6 +62,7 @@ const initialState = {
                 action.productData.id,//riprendiamo id definito per Firebase
               //'u1', non sarà più statico ma sarà dinamico preso dalla actions products
               action.productData.ownerId,
+              action.productData.pushToken,
               action.productData.title,
               action.productData.imageUrl,
               action.productData.description,
@@ -97,6 +98,7 @@ const initialState = {
             const updatedProduct = new Product(
               action.pid,
               state.userProducts[productIndex].ownerId,
+              state.userProducts[productIndex].pushToken,
               action.productData.title,
               action.productData.imageUrl,
               action.productData.description,

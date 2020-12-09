@@ -1,5 +1,7 @@
 //richiamo la Product per creare un nuovo prodotto
 import Product from '../../models/product';
+import * as Notifications from 'expo-notifications';
+import * as Permissions from 'expo-permissions';
 
 
 export const SET_PRODUCTS = 'SET_PRODUCTS';
@@ -33,6 +35,7 @@ export const fetchProducts = () => {
                     key,
                         //'u1', non sarà più così ma sarà:
                         resData[key].ownerId,
+                        resData[key].ownerPushToken,//preso da fireBase
                         resData[key].title,
                         resData[key].imageUrl,
                         resData[key].description,
@@ -120,6 +123,26 @@ https://rn-shopapp-fb5e0.firebaseio.com/products.json
 */
 export const createProduct = (title, description, imageUrl, price) => {
     return async (dispatch, getState) => {
+/**
+ * controllo stato autorizzazioni prima di tutto e salvo tutto dentro constante statusObj
+ * faccio condizione if comenell'esercizio precedente di statusObj
+ * generiamo il token per le push notifications
+ * definisco una variabile pushToken e se la 2 condizione if di statusObj è corretta mettiamo il token a null
+ */
+let pushToken;
+        let statusObj=await Permissions.getAsync(Permissions.NOTIFICATIONS);//mettiamo un await perchè ritorna una promessa
+        if (statusObj.status !== 'granted') {
+            statusObj=await Permissions.askAsync(Permissions.NOTIFICATIONS);//uso await perchè è asincrono
+          }
+        
+        if(statusObj.status!=='granted'){
+            pushToken=null;
+        }else{//se abbiamo dato le autorizzazioni allora:
+            pushToken=(await Notifications.getExpoPushTokenAsync()).data;//mettiamo await perchè c'è async, richiamiamo il valore data come abbiamo fatto nell'altro esercizio
+
+        }
+        
+        Notifications.getExpoPushTokenAsync();
         const token = getState().auth.token;
         const userId = getState().auth.userId;
         // any async code you want!
@@ -135,7 +158,8 @@ export const createProduct = (title, description, imageUrl, price) => {
                   description,
                   imageUrl,
                   price,
-                  ownerId: userId
+                  ownerId: userId,
+                  ownerPushToken:pushToken //passiamo anche questo al server, ogni volta che creiamo un nuovo prodotto inviamo un nuovo pushToken
                 })
               }
             );
@@ -151,7 +175,8 @@ export const createProduct = (title, description, imageUrl, price) => {
                   description,
                   imageUrl,
                   price,
-                  ownerId: userId
+                  ownerId: userId,
+                  pushToken:pushToken,
                 }
               });
             };
